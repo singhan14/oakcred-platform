@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#18181b" />
+      <stop offset="100%" stop-color="#0a0a0b" />
+    </radialGradient>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" rx="100" />
+  <g transform="translate(256, 256)">
+    <!-- Main Text O -->
+    <text x="-90" y="80" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="280" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-10">O</text>
+    <!-- Main Text C -->
+    <text x="70" y="80" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="280" font-weight="800" fill="url(#brandGrad)" filter="url(#glow)" text-anchor="middle" letter-spacing="-10">C</text>
+  </g>
+</svg>

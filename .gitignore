@@ -1,0 +1,10 @@
+node_modules/
+dist/
+build/
+.env
+.env.*
+!.env.example
+.venv/
+.DS_Store
+__pycache__/
+.vscode/

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CreditIQ — Billing &amp; Subscriptions</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;700;800&amp;family=Instrument+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;family=Syne:wght@700;800&amp;family=Playfair+Display:wght@700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-fixed": "#ffdbd0",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#ede1d1",
+                        "inverse-on-surface": "#f3f0e9",
+                        "surface-variant": "#e5e2db",
+                        "primary": "#a02f00",
+                        "inverse-surface": "#31312c",
+                        "inverse-primary": "#ffb59d",
+                        "tertiary-container": "#3f7b5f",
+                        "outline-variant": "#e2bfb5",
+                        "surface-bright": "#fcf9f2",
+                        "on-primary-fixed": "#390b00",
+                        "on-tertiary-container": "#d1ffe4",
+                        "surface-container": "#f1eee7",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#1c1c18",
+                        "surface-tint": "#ad3400",
+                        "on-secondary-fixed-variant": "#4d463a",
+                        "background": "#fcf9f2",
+                        "tertiary": "#246248",
+                        "secondary-fixed": "#ede1d1",
+                        "surface-container-low": "#f6f3ec",
+                        "surface-container-highest": "#e5e2db",
+                        "on-secondary-fixed": "#211b11",
+                        "on-secondary-container": "#6c6357",
+                        "on-primary-fixed-variant": "#842500",
+                        "tertiary-fixed": "#b1f0ce",
+                        "on-tertiary-fixed-variant": "#0e5138",
+                        "on-error": "#ffffff",
+                        "surface": "#fcf9f2",
+                        "on-primary": "#ffffff",
+                        "outline": "#8e7168",
+                        "surface-dim": "#dcdad3",
+                        "primary-container": "#c8410a",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#5a4139",
+                        "primary-fixed-dim": "#ffb59d",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#95d4b3",
+                        "surface-container-high": "#ebe8e1",
+                        "secondary-fixed-dim": "#d1c5b6",
+                        "on-tertiary-fixed": "#002114",
+                        "on-error-container": "#93000a",
+                        "secondary": "#665d51",
+                        "on-primary-container": "#fff2ee",
+                        "on-surface": "#1c1c18"
+                    },
+                    fontFamily: {
+                        "headline": ["Epilogue", "Syne", "sans-serif"],
+                        "display": ["Playfair Display", "serif"],
+                        "body": ["Instrument Sans", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                        "label": ["Instrument Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Instrument Sans', sans-serif; }
+        .glass-header { backdrop-filter: blur(12px); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-screen w-64 flex flex-col py-8 bg-stone-100 dark:bg-stone-900 border-r-0 z-50">
+<div class="px-8 mb-10">
+<span class="text-xl font-bold text-orange-900 dark:text-orange-500 tracking-widest font-headline">CreditIQ</span>
+<p class="text-[10px] uppercase tracking-[0.2em] text-stone-500 mt-1">Premium Intelligence</p>
+</div>
+<nav class="flex-1 space-y-1 px-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-stone-600 dark:text-stone-400 hover:text-orange-800 hover:bg-stone-200/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-stone-600 dark:text-stone-400 hover:text-orange-800 hover:bg-stone-200/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-medium">Clients</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-stone-600 dark:text-stone-400 hover:text-orange-800 hover:bg-stone-200/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-medium">Ledger</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-orange-900 dark:text-orange-400 font-bold border-r-4 border-orange-800 dark:border-orange-500 bg-stone-200/50 translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-medium">Billing</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-stone-600 dark:text-stone-400 hover:text-orange-800 hover:bg-stone-200/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-4 space-y-1">
+<div class="mx-4 p-4 rounded-xl bg-primary/5 mb-6">
+<p class="text-xs font-bold text-primary mb-2">Upgrade Plan</p>
+<p class="text-[10px] text-stone-500 leading-relaxed">Get unlimited credit assessments &amp; priority support.</p>
+</div>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-stone-600 hover:text-orange-800 hover:bg-stone-200/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span class="font-medium text-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-stone-600 hover:text-orange-800 hover:bg-stone-200/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-medium text-sm">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Wrapper -->
+<div class="ml-64 min-h-screen">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full flex justify-between items-center h-16 px-8 bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-md border-b border-stone-200/50 dark:border-stone-800/50 z-40">
+<div class="flex items-center gap-6">
+<h1 class="font-headline text-lg font-bold tracking-tight text-on-surface">Billing &amp; Subscriptions</h1>
+<nav class="hidden md:flex items-center gap-6 ml-4">
+<a class="text-stone-500 hover:text-stone-900 transition-all font-medium text-sm" href="#">Usage</a>
+<a class="text-stone-500 hover:text-stone-900 transition-all font-medium text-sm" href="#">Invoices</a>
+<a class="text-orange-800 dark:text-orange-400 border-b-2 border-orange-800 pb-1 font-medium text-sm" href="#">Plans</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined text-stone-500 p-2 hover:bg-stone-200/50 rounded-full cursor-pointer" data-icon="notifications">notifications</span>
+</div>
+<span class="material-symbols-outlined text-stone-500 p-2 hover:bg-stone-200/50 rounded-full cursor-pointer" data-icon="help_outline">help_outline</span>
+<div class="w-8 h-8 rounded-full bg-stone-200 overflow-hidden ml-2 ring-2 ring-stone-200/50">
+<img alt="Senior Partner Profile" class="w-full h-full object-cover" data-alt="Professional headshot of a business executive" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAanAxId5Q8ln5RiGRPh5Djl2sDnFFUcpLyp9vp8X1mdvnUR22YOvZCtWZRSTrPUhWhSVo1OIK36Lqhhk2nxvnPZgxU5sN8eQYiQE88hmC2OO_iLAcN5TvkM99x-3OVEGW8R759ZgoDkVUyWyC42GRU5BVh8H_mkyMWKLlUNAY5lmF-SXGueUxy0sDPS6TT83SAh2nDRlZVVZsu1UNEuIMQpf66Julww32bv0xyjxkdzQP-wHKgRSHLFzoMKHNC9U3CQTFi2ww8OmM"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<main class="max-w-[1000px] mx-auto py-12 px-8">
+<!-- 1. CURRENT PLAN CARD -->
+<section class="mb-12">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border-l-4 border-primary-container p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+<div class="flex-1 space-y-4">
+<div>
+<span class="text-[10px] uppercase tracking-widest font-bold text-stone-400 block mb-1">Current Plan</span>
+<div class="flex items-baseline gap-4">
+<h2 class="text-4xl font-display text-on-surface">PRACTICE</h2>
+<span class="px-2.5 py-1 bg-tertiary/10 text-tertiary rounded-full text-[10px] font-bold flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 bg-tertiary rounded-full"></span>
+                                    ACTIVE
+                                </span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-mono">
+<span class="text-stone-500">Assessments Usage</span>
+<span class="text-on-surface font-bold">67 / 100</span>
+</div>
+<div class="w-full h-2 bg-stone-100 rounded-full overflow-hidden">
+<div class="h-full bg-primary-container" style="width: 67%"></div>
+</div>
+<p class="text-[11px] text-stone-500">Renews April 1, 2026</p>
+</div>
+<div class="flex flex-col justify-end">
+<span class="text-2xl font-mono font-medium text-on-surface tracking-tighter">₹7,999<span class="text-sm font-body text-stone-400 ml-1">/ month</span></span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-3 w-full md:w-auto">
+<button class="px-6 py-2.5 bg-primary-container text-white rounded-lg text-sm font-bold shadow-sm hover:opacity-90 transition-all">
+                            Upgrade to Enterprise
+                        </button>
+<button class="px-6 py-2.5 border border-stone-200 text-on-surface rounded-lg text-sm font-semibold hover:bg-stone-50 transition-all">
+                            Manage
+                        </button>
+</div>
+</div>
+</section>
+<!-- 2. PLAN COMPARISON SECTION -->
+<section class="mb-16">
+<h3 class="text-3xl font-display mb-10 text-on-surface">Choose your plan</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+<!-- Starter Card -->
+<div class="bg-surface-container-low rounded-xl p-8 flex flex-col border border-transparent">
+<div class="mb-6">
+<h4 class="text-lg font-headline font-bold text-stone-700">Starter</h4>
+<p class="text-sm text-stone-500 mt-1">For individual consultants</p>
+</div>
+<div class="mb-8 font-mono">
+<span class="text-3xl font-bold">₹2,499</span>
+<span class="text-stone-400 text-sm">/mo</span>
+</div>
+<ul class="space-y-4 mb-10 flex-1">
+<li class="flex items-start gap-3 text-sm text-stone-600">
+<span class="material-symbols-outlined text-tertiary text-lg" data-icon="check_circle">check_circle</span>
+                                10 Assessments / mo
+                            </li>
+<li class="flex items-start gap-3 text-sm text-stone-600">
+<span class="material-symbols-outlined text-tertiary text-lg" data-icon="check_circle">check_circle</span>
+                                Basic PDF Reports
+                            </li>
+<li class="flex items-start gap-3 text-sm text-stone-600">
+<span class="material-symbols-outlined text-tertiary text-lg" data-icon="check_circle">check_circle</span>
+                                Single User Access
+                            </li>
+</ul>
+<button class="w-full py-3 bg-stone-200 text-stone-500 font-bold rounded-lg text-sm">
+                            Downgrade
+                        </button>
+</div>
+<!-- Practice Card (Popular) -->
+<div class="bg-surface-container-lowest rounded-xl p-8 flex flex-col border-2 border-primary-container relative shadow-xl scale-105 z-10">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary-container text-white text-[10px] font-bold tracking-widest rounded-full uppercase">
+                            Most Popular
+                        </div>
+<div class="mb-6">
+<h4 class="text-lg font-headline font-bold text-on-surface">Practice</h4>
+<p class="text-sm text-stone-500 mt-1">For growing boutique firms</p>
+</div>
+<div class="mb-8 font-mono">
+<span class="text-3xl font-bold">₹7,999</span>
+<span class="text-stone-400 text-sm">/mo</span>
+</div>
+<ul class="space-y-4 mb-10 flex-1">
+<li class="flex items-start gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-tertiary text-lg" data-icon="check_circle">check_circle</span>
+                                100 Assessments / mo
+                            </li>
+<li class="flex items-start gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-tertiary text-lg" data-icon="check_circle">check_circle</span>
+                                Advanced Analytics
+                            </li>
+<li class="flex items-start gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-tertiary text-lg" data-icon="check_circle">check_circle</span>
+                                Up to 5 Team Members
+                            </li>
+<li class="flex items-start gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-tertiary text-lg" data-icon="check_circle">check_circle</span>
+                                Priority Email Support
+                            </li>
+</ul>
+<button class="w-full py-3 bg-tertiary/10 text-tertiary font-bold rounded-lg text-sm cursor-default" disabled="">
+                            Current Plan
+                        </button>
+</div>
+<!-- Enterprise Card -->
+<div class="bg-surface-container-low rounded-xl p-8 flex flex-col border border-transparent">
+<div class="mb-6">
+<h4 class="text-lg font-headline font-bold text-stone-700">Enterprise</h4>
+<p class="text-sm text-stone-500 mt-1">For large audit corporations</p>
+</div>
+<div class="mb-8 font-mono">
+<span class="text-3xl font-bold">₹19,999</span>
+<span class="text-stone-400 text-sm">/mo</span>
+</div>
+<ul class="space-y-4 mb-10 flex-1">
+<li class="flex items-start gap-3 text-sm text-stone-600">
+<span class="material-symbols-outlined text-tertiary text-lg" data-icon="check_circle">check_circle</span>
+                                Unlimited Assessments
+                            </li>
+<li class="flex items-start gap-3 text-sm text-stone-600">
+<span class="material-symbols-outlined text-tertiary text-lg" data-icon="check_circle">check_circle</span>
+                                White-labeled Reports
+                            </li>
+<li class="flex items-start gap-3 text-sm text-stone-600">
+<span class="material-symbols-outlined text-tertiary text-lg" data-icon="check_circle">check_circle</span>
+                                Custom Integrations
+                            </li>
+<li class="flex items-start gap-3 text-sm text-stone-600">
+<span class="material-symbols-outlined text-tertiary text-lg" data-icon="check_circle">check_circle</span>
+                                Dedicated Account Manager
+                            </li>
+</ul>
+<button class="w-full py-3 bg-primary-container text-white font-bold rounded-lg text-sm hover:opacity-90 transition-all">
+                            Upgrade
+                        </button>
+</div>
+</div>
+</section>
+<!-- 3. PAYMENT HISTORY TABLE -->
+<section class="mb-12">
+<div class="bg-surface-container-lowest rounded-xl border border-stone-200 overflow-hidden">
+<div class="px-8 py-5 border-b border-stone-100 flex justify-between items-center">
+<h4 class="font-bold text-on-surface">Payment History</h4>
+<span class="material-symbols-outlined text-stone-400 cursor-pointer" data-icon="filter_list">filter_list</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-stone-50/50 text-[10px] uppercase tracking-widest text-stone-400 font-bold">
+<tr>
+<th class="px-8 py-4">Date</th>
+<th class="px-8 py-4">Plan</th>
+<th class="px-8 py-4">Amount</th>
+<th class="px-8 py-4">Status</th>
+<th class="px-8 py-4 text-right">Invoice</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-stone-50 text-sm font-body">
+<tr class="hover:bg-stone-50/50 transition-colors">
+<td class="px-8 py-4 font-mono">March 01, 2025</td>
+<td class="px-8 py-4">Practice (Monthly)</td>
+<td class="px-8 py-4 font-mono">₹7,999.00</td>
+<td class="px-8 py-4">
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary rounded text-[10px] font-bold uppercase">PAID</span>
+</td>
+<td class="px-8 py-4 text-right">
+<a class="text-primary hover:underline inline-flex items-center gap-1 font-semibold text-xs" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+                                            Download
+                                        </a>
+</td>
+</tr>
+<tr class="hover:bg-stone-50/50 transition-colors">
+<td class="px-8 py-4 font-mono">Feb 01, 2025</td>
+<td class="px-8 py-4">Practice (Monthly)</td>
+<td class="px-8 py-4 font-mono">₹7,999.00</td>
+<td class="px-8 py-4">
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary rounded text-[10px] font-bold uppercase">PAID</span>
+</td>
+<td class="px-8 py-4 text-right">
+<a class="text-primary hover:underline inline-flex items-center gap-1 font-semibold text-xs" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+                                            Download
+                                        </a>
+</td>
+</tr>
+<tr class="hover:bg-stone-50/50 transition-colors">
+<td class="px-8 py-4 font-mono">Jan 01, 2025</td>
+<td class="px-8 py-4">Starter (Monthly)</td>
+<td class="px-8 py-4 font-mono">₹2,499.00</td>
+<td class="px-8 py-4">
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary rounded text-[10px] font-bold uppercase">PAID</span>
+</td>
+<td class="px-8 py-4 text-right">
+<a class="text-primary hover:underline inline-flex items-center gap-1 font-semibold text-xs" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+                                            Download
+                                        </a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-8 py-4 bg-stone-50/30 text-center">
+<button class="text-stone-400 text-xs font-bold hover:text-stone-600 transition-colors">View All Transactions</button>
+</div>
+</div>
+</section>
+<!-- 4. DANGER ZONE -->
+<section>
+<div class="bg-[#FFEBEE] rounded-xl border border-error/20 p-8 flex flex-col md:flex-row justify-between items-center gap-6">
+<div>
+<h4 class="text-error font-headline font-bold mb-1">Cancel Subscription</h4>
+<p class="text-sm text-error/70">Your plan will remain active until <span class="font-bold">April 1, 2026</span>. All assessment history will be preserved.</p>
+</div>
+<button class="px-6 py-2 border border-error text-error rounded-lg text-sm font-bold hover:bg-error/5 transition-all whitespace-nowrap">
+                        Cancel Plan
+                    </button>
+</div>
+</section>
+</main>
+<!-- Footer / Support area -->
+<footer class="max-w-[1000px] mx-auto px-8 pb-12">
+<div class="border-t border-stone-200 pt-8 flex flex-col md:flex-row justify-between gap-6 items-center">
+<div class="flex gap-8">
+<a class="text-xs text-stone-400 hover:text-on-surface" href="#">Terms of Service</a>
+<a class="text-xs text-stone-400 hover:text-on-surface" href="#">Privacy Policy</a>
+<a class="text-xs text-stone-400 hover:text-on-surface" href="#">Tax Settings</a>
+</div>
+<p class="text-xs text-stone-400 font-mono">© 2025 CreditIQ Intelligence Systems Private Ltd.</p>
+</div>
+</footer>
+</div>
+</body></html>

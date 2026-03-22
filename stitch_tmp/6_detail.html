@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CreditIQ | Borrower Detail - Sharma Textiles Pvt Ltd</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800;900&amp;family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Manrope:wght@400;500;600;700&amp;family=Syne:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#fcf9f2",
+                        "surface-container-highest": "#e5e2db",
+                        "on-secondary-fixed": "#211b11",
+                        "on-secondary-container": "#6c6357",
+                        "on-primary-fixed-variant": "#842500",
+                        "tertiary-fixed": "#b1f0ce",
+                        "on-tertiary-fixed-variant": "#0e5138",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#5a4139",
+                        "outline": "#8e7168",
+                        "surface-dim": "#dcdad3",
+                        "primary-container": "#c8410a",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#ffb59d",
+                        "on-surface": "#1c1c18",
+                        "secondary": "#665d51",
+                        "on-primary-container": "#fff2ee",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#95d4b3",
+                        "surface-container-high": "#ebe8e1",
+                        "secondary-fixed-dim": "#d1c5b6",
+                        "on-tertiary-fixed": "#002114",
+                        "inverse-on-surface": "#f3f0e9",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#ede1d1",
+                        "primary-fixed": "#ffdbd0",
+                        "surface-bright": "#fcf9f2",
+                        "on-primary-fixed": "#390b00",
+                        "tertiary-container": "#3f7b5f",
+                        "outline-variant": "#e2bfb5",
+                        "surface-variant": "#e5e2db",
+                        "primary": "#a02f00",
+                        "inverse-surface": "#31312c",
+                        "inverse-primary": "#ffb59d",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#1c1c18",
+                        "surface-container": "#f1eee7",
+                        "on-tertiary-container": "#d1ffe4",
+                        "surface-container-low": "#f6f3ec",
+                        "tertiary": "#246248",
+                        "secondary-fixed": "#ede1d1",
+                        "background": "#fcf9f2",
+                        "surface-tint": "#ad3400",
+                        "on-secondary-fixed-variant": "#4d463a"
+                    },
+                    fontFamily: {
+                        "headline": ["Syne", "Epilogue", "sans-serif"],
+                        "body": ["Instrument Sans", "Manrope", "sans-serif"],
+                        "label": ["Manrope", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-header {
+            background: rgba(252, 249, 242, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .primary-gradient {
+            background: linear-gradient(135deg, #a02f00 0%, #c8410a 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- Sidebar Navigation Shell -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-[#1A1714] flex flex-col py-6 z-50 shadow-2xl">
+<div class="px-6 mb-10">
+<h1 class="text-2xl font-bold text-white tracking-tighter font-headline">CreditIQ</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-label">The Digital Ledger</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="text-gray-400 hover:text-white px-4 py-3 mx-2 flex items-center gap-3 transition-colors font-epilogue font-medium text-sm tracking-wide hover:bg-white/10 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="text-white bg-[#C8410A] rounded-lg mx-2 px-4 py-3 flex items-center gap-3 transition-all font-epilogue font-medium text-sm tracking-wide" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+                All Clients
+            </a>
+<a class="text-gray-400 hover:text-white px-4 py-3 mx-2 flex items-center gap-3 transition-colors font-epilogue font-medium text-sm tracking-wide hover:bg-white/10 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="assignment_add">assignment_add</span>
+                New Assessment
+            </a>
+<a class="text-gray-400 hover:text-white px-4 py-3 mx-2 flex items-center gap-3 transition-colors font-epilogue font-medium text-sm tracking-wide hover:bg-white/10 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+                Alerts
+            </a>
+<a class="text-gray-400 hover:text-white px-4 py-3 mx-2 flex items-center gap-3 transition-colors font-epilogue font-medium text-sm tracking-wide hover:bg-white/10 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+                GST Monitor
+            </a>
+<a class="text-gray-400 hover:text-white px-4 py-3 mx-2 flex items-center gap-3 transition-colors font-epilogue font-medium text-sm tracking-wide hover:bg-white/10 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="ios_share">ios_share</span>
+                Export Reports
+            </a>
+</nav>
+<div class="px-6 mt-auto pt-6 border-t border-white/5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#C8410A] to-primary flex items-center justify-center text-white font-bold overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Corporate professional headshot avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNejckl14uykzxNXgaC1ZHy2-2bqXWJAXxqkJEzmXu0yTD-C8JjfAJv_ElajXnAiBj7zUH6oIFTIlmQrT1mpYUvxSXj9qi0fzbrGgGKHefWlFWUQVwmfMtHRrkJ0MI7i2xl2FwDtW-JxygzvUrKBp6hOkfmYl1gfhcKJ7mZa8y6zCnj8leoNNTPxlcoxQSRrSsm3Wy6E4DNLeYFLlp7k-kCEPynUhxkJf2uKrbL69zFDYzNYnHu7cWSsiISGYs-H5dWUVFTKvTIiU"/>
+</div>
+<div>
+<p class="text-xs font-bold text-white">Aditya Verma</p>
+<p class="text-[10px] text-gray-500">Senior Credit Officer</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- Top Sticky Header -->
+<header class="sticky top-0 z-40 w-full glass-header border-b border-on-surface/10 px-8 py-4 flex justify-between items-center">
+<div class="flex items-center gap-4">
+<button class="text-on-surface/60 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h2 class="font-epilogue text-lg font-bold text-on-surface">Borrower Intelligence</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface/40 group-focus-within:text-primary transition-colors" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg text-sm focus:ring-2 focus:ring-primary w-64 transition-all" placeholder="Search borrowers..." type="text"/>
+</div>
+<button class="p-2 text-on-surface/60 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="p-2 text-on-surface/60 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+</div>
+</header>
+<div class="p-8 space-y-8 max-w-7xl mx-auto">
+<!-- HEADER SECTION -->
+<section class="bg-surface-container-lowest rounded-xl p-8 shadow-sm flex flex-col md:flex-row justify-between items-start gap-6 border-b-2 border-primary/5">
+<div class="flex gap-6">
+<div class="w-20 h-20 rounded-full primary-gradient flex items-center justify-center text-white text-3xl font-bold font-headline shadow-lg shadow-primary/20">
+                        ST
+                    </div>
+<div class="space-y-3">
+<div class="flex items-center gap-3">
+<h3 class="text-3xl font-bold font-headline text-on-surface tracking-tight">Sharma Textiles Pvt Ltd</h3>
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-[10px] font-bold uppercase tracking-wider text-on-secondary-container">MSME</span>
+<span class="px-3 py-1 bg-secondary-container rounded-full text-[10px] font-bold uppercase tracking-wider text-on-secondary-container">Textile</span>
+</div>
+<div class="flex flex-wrap items-center gap-4">
+<code class="font-mono text-sm bg-surface-container-low px-2 py-1 rounded text-primary font-medium tracking-tighter">27AAPCS1234A1Z5</code>
+<div class="h-4 w-[1px] bg-on-surface/10"></div>
+<div class="flex items-center gap-2 px-3 py-1 bg-tertiary/10 text-tertiary rounded-full text-xs font-bold">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                Consent: ACTIVE
+                            </div>
+<div class="flex items-center gap-2 px-3 py-1 bg-on-surface/5 text-on-surface/60 rounded-full text-xs font-semibold">
+<span class="material-symbols-outlined text-sm" data-icon="sync">sync</span>
+                                GST: Synced 2h ago
+                            </div>
+<div class="flex items-center gap-2 px-3 py-1 bg-on-surface/5 text-on-surface/60 rounded-full text-xs font-semibold">
+<span class="material-symbols-outlined text-sm" data-icon="description">description</span>
+                                ITR: 3 years
+                            </div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="bg-primary text-white px-6 py-2.5 rounded-lg font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="bolt">bolt</span>
+                        Run Assessment
+                    </button>
+<button class="border border-outline/30 text-on-surface px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-surface-container-low transition-all">
+                        Generate Report
+                    </button>
+<button class="p-2 text-on-surface/40 hover:text-on-surface">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</section>
+<!-- SCORE HERO SECTION -->
+<section class="bg-surface-container-lowest rounded-xl p-8 shadow-sm grid grid-cols-1 lg:grid-cols-3 gap-8 items-center overflow-hidden">
+<div class="space-y-4">
+<p class="font-mono text-[10px] uppercase tracking-[0.2em] text-on-surface/40">Current Credit Score</p>
+<div class="flex items-baseline gap-4">
+<h4 class="text-8xl font-black font-headline text-tertiary leading-none">78</h4>
+<div class="space-y-1">
+<span class="text-tertiary font-bold flex items-center gap-1 text-sm bg-tertiary/10 px-2 py-0.5 rounded-md">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+                                +6 pts
+                            </span>
+<p class="text-[10px] text-on-surface/40 font-medium">since last assessment</p>
+</div>
+</div>
+</div>
+<div class="h-32 lg:col-span-2 relative group">
+<!-- Placeholder for Sparkline -->
+<div class="absolute inset-0 flex items-end gap-2 px-4">
+<div class="flex-1 bg-tertiary/10 h-[58%] rounded-t transition-all group-hover:bg-tertiary/20"></div>
+<div class="flex-1 bg-tertiary/15 h-[62%] rounded-t transition-all group-hover:bg-tertiary/25"></div>
+<div class="flex-1 bg-tertiary/20 h-[67%] rounded-t transition-all group-hover:bg-tertiary/30"></div>
+<div class="flex-1 bg-tertiary/25 h-[71%] rounded-t transition-all group-hover:bg-tertiary/35"></div>
+<div class="flex-1 bg-tertiary/30 h-[74%] rounded-t transition-all group-hover:bg-tertiary/40"></div>
+<div class="flex-1 bg-tertiary h-[78%] rounded-t shadow-lg shadow-tertiary/20"></div>
+<div class="flex-1 bg-surface-container-high h-[10%] rounded-t"></div>
+<div class="flex-1 bg-surface-container-high h-[10%] rounded-t"></div>
+<div class="flex-1 bg-surface-container-high h-[10%] rounded-t"></div>
+<div class="flex-1 bg-surface-container-high h-[10%] rounded-t"></div>
+<div class="flex-1 bg-surface-container-high h-[10%] rounded-t"></div>
+<div class="flex-1 bg-surface-container-high h-[10%] rounded-t"></div>
+</div>
+<div class="absolute bottom-[-24px] w-full flex justify-between text-[10px] font-mono text-on-surface/40 uppercase tracking-widest px-2">
+<span>12 Months Trend</span>
+<span>Today</span>
+</div>
+</div>
+<div class="lg:col-span-3 mt-4">
+<div class="w-full bg-[#E8F5E9] border border-tertiary/10 rounded-lg py-3 px-6 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-headline font-extrabold text-tertiary tracking-widest text-sm">LOAN READY</span>
+</div>
+<p class="text-[11px] text-tertiary/80 font-bold uppercase tracking-tight">The borrower meets 92% of qualifying criteria for MSME Expansion Credit</p>
+</div>
+</div>
+</section>
+<!-- FACTOR BREAKDOWN -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border-l-4 border-tertiary hover:translate-y-[-4px] transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface/50">GST Health</p>
+<span class="font-mono text-lg font-bold text-tertiary">82/100</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-high rounded-full mb-3 overflow-hidden">
+<div class="bg-tertiary h-full w-[82%] rounded-full"></div>
+</div>
+<p class="text-xs text-on-surface/70 font-medium italic">Filing consistent for 24 months</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border-l-4 border-tertiary hover:translate-y-[-4px] transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface/50">Cash Flow</p>
+<span class="font-mono text-lg font-bold text-tertiary">76/100</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-high rounded-full mb-3 overflow-hidden">
+<div class="bg-tertiary h-full w-[76%] rounded-full"></div>
+</div>
+<p class="text-xs text-on-surface/70 font-medium italic">No bounces detected in 6mo</p>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border-l-4 border-[#FFB300] hover:translate-y-[-4px] transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface/50">Tax Compliance</p>
+<span class="font-mono text-lg font-bold text-[#FFB300]">68/100</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-high rounded-full mb-3 overflow-hidden">
+<div class="bg-[#FFB300] h-full w-[68%] rounded-full"></div>
+</div>
+<p class="text-xs text-on-surface/70 font-medium italic">2 late filings in FY 23-24</p>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border-l-4 border-tertiary hover:translate-y-[-4px] transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface/50">Debt Service</p>
+<span class="font-mono text-lg font-bold text-tertiary">71/100</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-high rounded-full mb-3 overflow-hidden">
+<div class="bg-tertiary h-full w-[71%] rounded-full"></div>
+</div>
+<p class="text-xs text-on-surface/70 font-bold">DSCR: 2.1x</p>
+</div>
+</section>
+<!-- TWO COLUMN SECTION -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<!-- Risk Flags Panel -->
+<section class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm flex flex-col">
+<div class="px-6 py-4 bg-surface-container-low border-b border-on-surface/5 flex items-center justify-between">
+<h5 class="font-headline font-bold text-sm uppercase tracking-wider">Risk Assessment Flags</h5>
+<span class="material-symbols-outlined text-on-surface/40" data-icon="security">security</span>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex gap-4 p-4 rounded-lg bg-surface border-l-4 border-tertiary">
+<span class="material-symbols-outlined text-tertiary" data-icon="verified_user">verified_user</span>
+<div class="space-y-1">
+<p class="text-sm font-bold text-on-surface">GST filed consistently 22/24 months</p>
+<p class="text-xs text-on-surface/60">High operational stability observed. Recent late filings resolved.</p>
+<p class="text-[10px] text-tertiary font-bold mt-2 uppercase">SUGGESTION: ELIGIBLE FOR FASTER TRACK</p>
+</div>
+</div>
+<div class="flex gap-4 p-4 rounded-lg bg-surface border-l-4 border-tertiary">
+<span class="material-symbols-outlined text-tertiary" data-icon="trending_up">trending_up</span>
+<div class="space-y-1">
+<p class="text-sm font-bold text-on-surface">Turnover growing 18% YoY</p>
+<p class="text-xs text-on-surface/60">Revenue trend indicates strong market demand and scaling capacity.</p>
+<p class="text-[10px] text-tertiary font-bold mt-2 uppercase">SUGGESTION: MONITOR CASH FLOW PRESSURE</p>
+</div>
+</div>
+<div class="flex gap-4 p-4 rounded-lg bg-[#FFFDE7] border-l-4 border-[#FFB300]">
+<span class="material-symbols-outlined text-[#FFB300]" data-icon="warning" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div class="space-y-1">
+<p class="text-sm font-bold text-on-surface">Single buyer &gt;60% revenue</p>
+<p class="text-xs text-on-surface/60">High concentration risk on 'Trendify Retail'. Business sensitive to buyer credit.</p>
+<p class="text-[10px] text-[#A67C00] font-bold mt-2 uppercase">SUGGESTION: REQUIRE BUYER CREDIT REPORT</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Data Sources Panel -->
+<section class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm flex flex-col">
+<div class="px-6 py-4 bg-surface-container-low border-b border-on-surface/5 flex items-center justify-between">
+<h5 class="font-headline font-bold text-sm uppercase tracking-wider">Intelligence Data Sources</h5>
+<span class="material-symbols-outlined text-on-surface/40" data-icon="database">database</span>
+</div>
+<div class="p-6 space-y-2">
+<!-- Source Row -->
+<div class="flex items-center justify-between py-3 border-b border-on-surface/5 last:border-0">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="receipt_long">receipt_long</span>
+</div>
+<div>
+<p class="text-sm font-bold">GST Data</p>
+<p class="text-[10px] text-on-surface/60 uppercase">24 months sync'd • Today</p>
+</div>
+</div>
+<button class="text-[10px] font-bold text-primary px-3 py-1 bg-primary/5 rounded border border-primary/20 hover:bg-primary/10 transition-colors uppercase tracking-widest">Sync Now</button>
+</div>
+<!-- Source Row -->
+<div class="flex items-center justify-between py-3 border-b border-on-surface/5 last:border-0">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="account_balance">account_balance</span>
+</div>
+<div>
+<p class="text-sm font-bold">ITR Records</p>
+<p class="text-[10px] text-on-surface/60 uppercase">3 years (2022-2024)</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-tertiary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Source Row -->
+<div class="flex items-center justify-between py-3 border-b border-on-surface/5 last:border-0">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="list_alt">list_alt</span>
+</div>
+<div>
+<p class="text-sm font-bold">Bank Statement</p>
+<p class="text-[10px] text-on-surface/60 uppercase">Uploaded 3 days ago • 6 months</p>
+</div>
+</div>
+<button class="text-[10px] font-bold text-on-surface/40 hover:text-on-surface transition-colors uppercase tracking-widest underline decoration-dashed">Update</button>
+</div>
+<!-- Source Row -->
+<div class="flex items-center justify-between py-3 border-b border-on-surface/5 last:border-0 opacity-60">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface/40 text-lg" data-icon="history_edu">history_edu</span>
+</div>
+<div>
+<p class="text-sm font-bold">CIBIL Bureau</p>
+<p class="text-[10px] text-on-surface/60 uppercase">Not Available</p>
+</div>
+</div>
+<button class="text-[10px] font-bold text-primary px-3 py-1 bg-primary/5 rounded border border-primary/20 hover:bg-primary/10 transition-colors uppercase tracking-widest">Request</button>
+</div>
+<div class="mt-6 p-4 rounded-xl bg-surface-container-low border-dashed border border-outline/30">
+<div class="flex justify-between items-center mb-1">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface/50">Consent Status</p>
+<a class="text-[10px] font-bold text-primary uppercase tracking-widest underline decoration-dashed" href="#">Renew</a>
+</div>
+<p class="text-xs font-bold text-on-surface">Valid until Oct 12, 2025</p>
+</div>
+</div>
+</section>
+</div>
+<!-- BOTTOM — Assessment History -->
+<section class="bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+<div class="flex items-center justify-between mb-8">
+<h5 class="font-headline font-bold text-xl">Assessment History</h5>
+<div class="h-[1px] flex-1 bg-on-surface/5 mx-6"></div>
+<span class="text-[10px] font-bold text-on-surface/40 uppercase tracking-[0.2em]">Archive 2023-2024</span>
+</div>
+<div class="space-y-0 relative before:content-[''] before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[1px] before:bg-primary/10">
+<!-- History Row 1 -->
+<div class="relative pl-10 pb-8 last:pb-0">
+<div class="absolute left-0 top-1 w-[23px] h-[23px] rounded-full bg-primary border-4 border-surface-container-lowest shadow-sm z-10"></div>
+<div class="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl hover:bg-surface-container-low transition-all">
+<div class="space-y-1">
+<p class="text-sm font-bold text-on-surface">Oct 24, 2024</p>
+<p class="text-[10px] font-mono text-on-surface/40 uppercase">Assessment ID: #CR-2024-991</p>
+</div>
+<div class="text-center w-24">
+<p class="text-2xl font-black font-headline text-tertiary">78</p>
+<p class="text-[9px] font-bold uppercase tracking-widest text-tertiary/60">Excellent</p>
+</div>
+<div>
+<span class="px-3 py-1 bg-tertiary/10 text-tertiary rounded-full text-[10px] font-bold uppercase tracking-widest">LOAN READY</span>
+</div>
+<a class="flex items-center gap-1 text-xs font-bold text-primary hover:underline" href="#">
+                                View Report
+                                <span class="material-symbols-outlined text-sm" data-icon="open_in_new">open_in_new</span>
+</a>
+</div>
+</div>
+<!-- History Row 2 -->
+<div class="relative pl-10 pb-8 last:pb-0">
+<div class="absolute left-0 top-1 w-[23px] h-[23px] rounded-full bg-primary-fixed border-4 border-surface-container-lowest shadow-sm z-10"></div>
+<div class="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl hover:bg-surface-container-low transition-all">
+<div class="space-y-1">
+<p class="text-sm font-bold text-on-surface">July 18, 2024</p>
+<p class="text-[10px] font-mono text-on-surface/40 uppercase">Assessment ID: #CR-2024-442</p>
+</div>
+<div class="text-center w-24">
+<p class="text-2xl font-black font-headline text-on-surface/70">72</p>
+<p class="text-[9px] font-bold uppercase tracking-widest text-on-surface/40">Good</p>
+</div>
+<div>
+<span class="px-3 py-1 bg-on-surface/5 text-on-surface/60 rounded-full text-[10px] font-bold uppercase tracking-widest">PRE-QUALIFIED</span>
+</div>
+<a class="flex items-center gap-1 text-xs font-bold text-primary hover:underline" href="#">
+                                View Report
+                                <span class="material-symbols-outlined text-sm" data-icon="open_in_new">open_in_new</span>
+</a>
+</div>
+</div>
+<!-- History Row 3 -->
+<div class="relative pl-10 pb-8 last:pb-0">
+<div class="absolute left-0 top-1 w-[23px] h-[23px] rounded-full bg-surface-container-high border-4 border-surface-container-lowest shadow-sm z-10"></div>
+<div class="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl hover:bg-surface-container-low transition-all">
+<div class="space-y-1">
+<p class="text-sm font-bold text-on-surface">March 02, 2024</p>
+<p class="text-[10px] font-mono text-on-surface/40 uppercase">Assessment ID: #CR-2024-105</p>
+</div>
+<div class="text-center w-24">
+<p class="text-2xl font-black font-headline text-on-surface/50">64</p>
+<p class="text-[9px] font-bold uppercase tracking-widest text-on-surface/40">Average</p>
+</div>
+<div>
+<span class="px-3 py-1 bg-on-surface/5 text-on-surface/60 rounded-full text-[10px] font-bold uppercase tracking-widest">WATCHLIST</span>
+</div>
+<a class="flex items-center gap-1 text-xs font-bold text-primary hover:underline" href="#">
+                                View Report
+                                <span class="material-symbols-outlined text-sm" data-icon="open_in_new">open_in_new</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Contextual FAB -->
+<div class="fixed bottom-8 right-8 z-50">
+<button class="w-14 h-14 primary-gradient text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-90 transition-all group">
+<span class="material-symbols-outlined text-2xl" data-icon="add_chart" style="font-variation-settings: 'FILL' 1;">add_chart</span>
+<span class="absolute right-full mr-4 bg-on-surface text-white px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Analyze Competitors</span>
+</button>
+</div>
+</body></html>

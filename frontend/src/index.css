@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+/* ─── OakCred Design System (Oak Obsidian) ───────────────── */
+@theme {
+  --color-primary: #F59E0B; /* Amber */
+  --color-primary-dark: #EA580C; /* Orange */
+  
+  --color-bg: #0A0A0B; /* Obsidian Base */
+  --color-surface: rgba(17, 17, 19, 0.4); /* Cards */
+  --color-surface-hover: rgba(255, 255, 255, 0.04); /* Hover */
+  --color-surface2: rgba(255, 255, 255, 0.02); /* Borders / Elevated */
+  
+  --color-border: rgba(255, 255, 255, 0.03);
+  --color-border-hover: rgba(245, 158, 11, 0.15); /* Amber glow border */
+  
+  --color-text: #FFFFFF;
+  --color-text-muted: #A1A1AA;
+  --color-text-subtle: #71717A;
+  
+  --color-sidebar: #111113;
+  --color-success: #10B981;
+  --color-success-bg: rgba(16, 185, 129, 0.1);
+  --color-warning: #F59E0B;
+  --color-warning-bg: rgba(245, 158, 11, 0.1);
+  --color-error: #EF4444;
+  --color-error-bg: rgba(239, 68, 68, 0.1);
+  --color-info: #3B82F6;
+  --color-info-bg: rgba(59, 130, 246, 0.1);
+
+  --font-display: "Inter", sans-serif;
+  --font-heading: "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-label: "Inter", sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display { font-family: var(--font-display); letter-spacing: -0.02em; }
+.font-heading { font-family: var(--font-heading); letter-spacing: -0.01em; }
+.font-mono { font-family: var(--font-mono); }
+.font-label { font-family: var(--font-label); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* ─── Oak Obsidian Utilities ──────────────────────────────── */
+.glass-panel {
+  background: rgba(17, 17, 19, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+  border-color: var(--color-border-hover);
+}
+
+/* ─── Score Colors ────────────────────────────────────────── */
+.score-high { color: var(--color-success); }
+.score-mid { color: var(--color-warning); }
+.score-low { color: var(--color-error); }
+.score-high-bg { background-color: var(--color-success-bg); color: var(--color-success); }
+.score-mid-bg { background-color: var(--color-warning-bg); color: var(--color-warning); }
+.score-low-bg { background-color: var(--color-error-bg); color: var(--color-error); }
+
+/* ─── Verdict Chips ───────────────────────────────────────── */
+.verdict-loan-ready { background-color: var(--color-success-bg); color: var(--color-success); }
+.verdict-conditional { background-color: var(--color-warning-bg); color: var(--color-warning); }
+.verdict-not-ready { background-color: var(--color-error-bg); color: var(--color-error); }
+
+/* ─── Grid pattern overlay ────────────────────────────────── */
+.grid-overlay {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* ─── Skeleton Loading ────────────────────────────────────── */
+@keyframes shimmer { to { background-position: -200% 0; } }
+.skeleton {
+  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-surface2) 50%, var(--color-border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* ─── Spinner ─────────────────────────────────────────────── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  width: 18px; height: 18px;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ─── Mobile Sidebar Animation ────────────────────────────── */
+@keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+.animate-slide-in { animation: slideIn 0.2s ease-out; }
+
+/* ─── Accessibility ───────────────────────────────────────── */
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+/* ─── Number input arrows ─────────────────────────────────── */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }
+
+/* ─── Transitions ─────────────────────────────────────────── */
+.transition-height { transition: max-height 0.3s ease, opacity 0.3s ease; }
