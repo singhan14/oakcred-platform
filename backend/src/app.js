@@ -22,23 +22,11 @@ const app = express();
 // ─── SECURITY ───────────────────────────────────────────────
 app.use(helmet());
 
-// Dynamic CORS based on config
-const origins = config.clientUrl ? config.clientUrl.split(',') : ['http://localhost:5173'];
-
 app.use(cors({
-  origin: (origin, callback) => {
-    // allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
-    if (origins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      console.warn(`[CORS] Rejected origin: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
 
 // ─── BODY PARSING ───────────────────────────────────────────
