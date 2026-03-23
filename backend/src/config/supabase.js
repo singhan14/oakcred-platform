@@ -1,12 +1,12 @@
 const { createClient } = require('@supabase/supabase-js');
 
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.warn('[Supabase] Missing SUPABASE_URL or SUPABASE_ANON_KEY. SSO may not work.');
+  console.warn('[SUPABASE] Missing environment variables. Auth will fail.');
 }
 
-const supabase = createClient(supabaseUrl || 'https://placeholder.supabase.co', supabaseKey || 'placeholder');
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 module.exports = supabase;
