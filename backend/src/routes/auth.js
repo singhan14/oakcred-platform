@@ -10,6 +10,7 @@ router.post('/refresh', auth.refresh);
 router.post('/logout', auth.logout);
 router.post('/forgot-password', authLimiter, auth.forgotPassword);
 router.post('/reset-password', authLimiter, auth.resetPassword);
+router.post('/sso', auth.ssoLogin);
 router.get('/me', authenticate, auth.me);
 
 module.exports = router;

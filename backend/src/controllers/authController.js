@@ -4,6 +4,7 @@ const config = require('../config');
 const prisma = require('../config/database');
 const { generateToken } = require('../utils/helpers');
 const { sendVerificationEmail, sendPasswordResetEmail } = require('../services/emailService');
+const supabase = require('../config/supabase');
 
 // POST /api/auth/register
 exports.register = async (req, res, next) => {
@@ -249,6 +250,94 @@ exports.me = async (req, res, next) => {
         id: user.firm.id, name: user.firm.name,
         plan: user.firm.subscriptionPlan, status: user.firm.subscriptionStatus,
       },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// POST /api/auth/sso
+exports.ssoLogin = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    if (!token) return res.status(400).json({ error: 'SSO token required' });
+
+    // 1. Verify token with Supabase
+    const { data: { user: sbUser }, error } = await supabase.auth.getUser(token);
+    if (error || !sbUser) {
+      return res.status(401).json({ error: 'Invalid SSO token' });
+    }
+
+    const email = sbUser.email;
+    const name = sbUser.user_metadata?.full_name || sbUser.user_metadata?.name || 'New User';
+
+    // 2. Check if user exists in Postgres
+    let user = await prisma.user.findUnique({
+      where: { email },
+      include: { firm: true },
+    });
+
+    // 3. Automated Onboarding for first-time users
+    if (!user) {
+      console.log(`[SSO] Onboarding new user: ${email}`);
+      user = await prisma.$transaction(async (tx) => {
+        const firm = await tx.firm.create({
+          data: {
+            name: `${name}'s Workspace`,
+            type: 'CA_FIRM',
+            subscriptionPlan: 'TRIAL',
+            subscriptionStatus: 'TRIAL',
+            subscriptionExpiry: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+          },
+        });
+
+        return await tx.user.create({
+          data: {
+            email,
+            name,
+            role: 'CA_ADMIN',
+            firmId: firm.id,
+            isVerified: true, // OAuth emails are pre-verified
+            isActive: true,
+          },
+          include: { firm: true },
+        });
+      });
+    }
+
+    // 4. Generate OakCred local JWT
+    const accessToken = jwt.sign(
+      { userId: user.id, email: user.email, role: user.role, firmId: user.firmId },
+      config.jwt.secret,
+      { expiresIn: config.jwt.accessExpiry }
+    );
+
+    const refreshToken = jwt.sign(
+      { userId: user.id },
+      config.jwt.refreshSecret,
+      { expiresIn: config.jwt.refreshExpiry }
+    );
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: config.nodeEnv === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastLogin: new Date() },
+    });
+
+    res.json({
+      accessToken,
+      user: {
+        id: user.id, email: user.email, name: user.name,
+        role: user.role, firmId: user.firmId,
+        firm: { id: user.firm.id, name: user.firm.name, plan: user.firm.subscriptionPlan },
+      },
+      isNewUser: !user.lastLogin,
     });
   } catch (err) {
     next(err);

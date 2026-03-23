@@ -89,7 +89,7 @@ exports.uploadITR = async (req, res, next) => {
 
     // Archive raw document for Phase 2 ML Training
     try {
-      await uploadBlob('ml-data', `borrower_${borrower.id}_itr_${req.file.originalname || 'doc.pdf'}`, req.file.buffer, req.file.mimetype);
+      await uploadBlob('ml-data', `itr/borrower_${borrower.id}_${Date.now()}_${req.file.originalname || 'doc.pdf'}`, req.file.buffer, req.file.mimetype);
     } catch (e) {
       console.warn('[ML Archival] Failed to save raw ITR document:', e.message);
     }
@@ -177,7 +177,7 @@ exports.uploadBankStatement = async (req, res, next) => {
 
     // Archive raw document for Phase 2 ML Training
     try {
-      await uploadBlob('ml-data', `borrower_${borrower.id}_bank_${req.file.originalname || 'stmt.csv'}`, req.file.buffer, req.file.mimetype);
+      await uploadBlob('ml-data', `bank/borrower_${borrower.id}_${Date.now()}_${req.file.originalname || 'stmt.csv'}`, req.file.buffer, req.file.mimetype);
     } catch (e) {
       console.warn('[ML Archival] Failed to save raw bank statement:', e.message);
     }
