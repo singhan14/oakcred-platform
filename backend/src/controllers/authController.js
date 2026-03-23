@@ -4,7 +4,7 @@ const config = require('../config');
 const prisma = require('../config/database');
 const { generateToken } = require('../utils/helpers');
 const { sendVerificationEmail, sendPasswordResetEmail } = require('../services/emailService');
-const supabase = require('../config/supabase');
+const jwksClient = require('jwks-rsa');
 
 // POST /api/auth/register
 exports.register = async (req, res, next) => {
@@ -259,17 +259,33 @@ exports.me = async (req, res, next) => {
 // POST /api/auth/sso
 exports.ssoLogin = async (req, res, next) => {
   try {
-    const { token } = req.body;
-    if (!token) return res.status(400).json({ error: 'SSO token required' });
+    const { idToken } = req.body;
+    if (!idToken) return res.status(400).json({ error: 'Auth0 ID Token required' });
 
-    // 1. Verify token with Supabase
-    const { data: { user: sbUser }, error } = await supabase.auth.getUser(token);
-    if (error || !sbUser) {
-      return res.status(401).json({ error: 'Invalid SSO token' });
-    }
+    // 1. Verify idToken with Auth0 JWKS
+    const client = jwksClient({
+      jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
+    });
 
-    const email = sbUser.email;
-    const name = sbUser.user_metadata?.full_name || sbUser.user_metadata?.name || 'New User';
+    const getKey = (header, callback) => {
+      client.getSigningKey(header.kid, (err, key) => {
+        const signingKey = key.getPublicKey();
+        callback(null, signingKey);
+      });
+    };
+
+    const decoded = await new Promise((resolve, reject) => {
+      jwt.verify(idToken, getKey, {
+        audience: process.env.AUTH0_CLIENT_ID,
+        issuer: `https://${process.env.AUTH0_DOMAIN}/`,
+        algorithms: ['RS256']
+      }, (err, decoded) => {
+        if (err) reject(err);
+        else resolve(decoded);
+      });
+    });
+
+    const { email, name, picture } = decoded;
 
     // 2. Check if user exists in Postgres
     let user = await prisma.user.findUnique({
@@ -279,7 +295,7 @@ exports.ssoLogin = async (req, res, next) => {
 
     // 3. Automated Onboarding for first-time users
     if (!user) {
-      console.log(`[SSO] Onboarding new user: ${email}`);
+      console.log(`[Auth0 SSO] Onboarding new user: ${email}`);
       user = await prisma.$transaction(async (tx) => {
         const firm = await tx.firm.create({
           data: {
@@ -297,7 +313,7 @@ exports.ssoLogin = async (req, res, next) => {
             name,
             role: 'CA_ADMIN',
             firmId: firm.id,
-            isVerified: true, // OAuth emails are pre-verified
+            isVerified: true, // Auth0 verified
             isActive: true,
           },
           include: { firm: true },
@@ -340,6 +356,7 @@ exports.ssoLogin = async (req, res, next) => {
       isNewUser: !user.lastLogin,
     });
   } catch (err) {
-    next(err);
+    console.error('[Auth0 SSO] Verification failed:', err.message);
+    res.status(401).json({ error: 'Auth0 verification failed' });
   }
 };
