@@ -1,15 +1,19 @@
-const config = require('../config');
-
-/**
- * Azure Blob Storage service.
- * Falls back to local filesystem when AZURE_STORAGE_CONNECTION_STRING is not set or is dev storage.
- */
-
+const { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
+const { getSignedUrl: getS3SignedUrl } = require('@aws-sdk/s3-request-presigner');
 const path = require('path');
 const fs = require('fs');
-const crypto = require('crypto');
 
 const LOCAL_STORAGE_DIR = path.join(__dirname, '../../storage');
+
+const s3Config = { region: process.env.AWS_REGION || 'eu-north-1' };
+if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
+  s3Config.credentials = {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  };
+}
+const s3Client = new S3Client(s3Config);
+const bucketName = process.env.AWS_S3_BUCKET;
 
 function ensureLocalDir(container) {
   const dir = path.join(LOCAL_STORAGE_DIR, container);
@@ -20,12 +24,11 @@ function ensureLocalDir(container) {
 }
 
 function isLocalMode() {
-  return !config.azure.storageConnectionString ||
-    config.azure.storageConnectionString === 'UseDevelopmentStorage=true';
+  return process.env.USE_LOCAL_STORAGE === 'true' || !process.env.AWS_S3_BUCKET;
 }
 
 /**
- * Upload a buffer to blob storage.
+ * Upload a buffer to S3 or local storage.
  * @returns {{ url: string, blobName: string }}
  */
 async function uploadBlob(container, fileName, buffer, contentType = 'application/pdf') {
@@ -40,17 +43,18 @@ async function uploadBlob(container, fileName, buffer, contentType = 'applicatio
     return { url, blobName };
   }
 
-  // Azure Blob Storage
-  const { BlobServiceClient } = require('@azure/storage-blob');
-  const blobService = BlobServiceClient.fromConnectionString(config.azure.storageConnectionString);
-  const containerClient = blobService.getContainerClient(container);
-  await containerClient.createIfNotExists();
-  const blockBlob = containerClient.getBlockBlobClient(blobName);
-  await blockBlob.upload(buffer, buffer.length, {
-    blobHTTPHeaders: { blobContentType: contentType },
+  const key = `${container}/${blobName}`;
+  const command = new PutObjectCommand({
+    Bucket: bucketName,
+    Key: key,
+    Body: buffer,
+    ContentType: contentType,
   });
 
-  return { url: blockBlob.url, blobName };
+  await s3Client.send(command);
+  
+  const url = `https://${bucketName}.s3.${s3Config.region}.amazonaws.com/${key}`;
+  return { url, blobName };
 }
 
 /**
@@ -61,16 +65,13 @@ async function getSignedUrl(container, blobName) {
     return `/storage/${container}/${blobName}`;
   }
 
-  const { BlobServiceClient, generateBlobSASQueryParameters, BlobSASPermissions, StorageSharedKeyCredential } = require('@azure/storage-blob');
-  const blobService = BlobServiceClient.fromConnectionString(config.azure.storageConnectionString);
-  const containerClient = blobService.getContainerClient(container);
-  const blockBlob = containerClient.getBlockBlobClient(blobName);
+  const key = `${container}/${blobName}`;
+  const command = new GetObjectCommand({
+    Bucket: bucketName,
+    Key: key,
+  });
 
-  const expiresOn = new Date();
-  expiresOn.setHours(expiresOn.getHours() + 24);
-
-  // For connection string-based auth, generate SAS token
-  return blockBlob.url + '?expires=' + expiresOn.toISOString();
+  return await getS3SignedUrl(s3Client, command, { expiresIn: 86400 });
 }
 
 /**
@@ -85,11 +86,13 @@ async function deleteBlob(container, blobName) {
     return;
   }
 
-  const { BlobServiceClient } = require('@azure/storage-blob');
-  const blobService = BlobServiceClient.fromConnectionString(config.azure.storageConnectionString);
-  const containerClient = blobService.getContainerClient(container);
-  const blockBlob = containerClient.getBlockBlobClient(blobName);
-  await blockBlob.deleteIfExists();
+  const key = `${container}/${blobName}`;
+  const command = new DeleteObjectCommand({
+    Bucket: bucketName,
+    Key: key,
+  });
+
+  await s3Client.send(command);
 }
 
 module.exports = { uploadBlob, getSignedUrl, deleteBlob, isLocalMode };

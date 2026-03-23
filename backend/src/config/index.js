@@ -32,11 +32,11 @@ const config = {
     apiKey: process.env.GSTN_API_KEY || 'mock',
   },
 
-  azure: {
-    storageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING || '',
-    containerReports: process.env.AZURE_STORAGE_CONTAINER_REPORTS || 'reports',
-    containerUploads: process.env.AZURE_STORAGE_CONTAINER_UPLOADS || 'uploads',
-    keyVaultUrl: process.env.AZURE_KEY_VAULT_URL || '',
+  aws: {
+    region: process.env.AWS_REGION || 'eu-north-1',
+    s3Bucket: process.env.AWS_S3_BUCKET || '',
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
   },
 
   redis: {
