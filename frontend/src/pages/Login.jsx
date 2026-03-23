@@ -139,10 +139,7 @@ export default function Login() {
           </form>
 
           <div className="mt-8 pt-6 border-t border-border/50 text-center">
-            <p className="text-xs text-text-muted leading-relaxed">
-              Demo credentials: <br/>
-              <span className="font-mono text-white/70 bg-surface px-2 py-0.5 rounded border border-border">demo@oakcred.com</span> / <span className="font-mono text-white/70 bg-surface px-2 py-0.5 rounded border border-border">Demo@1234</span>
-            </p>
+            {/* Demo credentials removed for production */}
           </div>
         </div>
 
