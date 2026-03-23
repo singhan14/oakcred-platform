@@ -84,9 +84,9 @@ export default function Login() {
 
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-8 h-8 rounded bg-gradient-primary flex items-center justify-center">
-            <span className="material-symbols-outlined text-white text-xl uppercase italic">account_tree</span>
+            <span className="material-symbols-outlined text-white text-xl uppercase">account_tree</span>
           </div>
-          <h1 className="font-display text-3xl font-bold tracking-tight text-white italic">Oak<span className="text-primary">Cred</span></h1>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-white">Oak<span className="text-primary">Cred</span></h1>
         </div>
         
         <div className="relative z-10 flex flex-col items-center justify-center my-12">
@@ -97,19 +97,19 @@ export default function Login() {
             <div className="text-center">
               <span className="font-display text-[7rem] font-bold text-white leading-none tracking-tighter shadow-glow">92</span>
               <div className="mt-4">
-                <span className="bg-primary/10 text-primary border border-primary/20 px-5 py-2 rounded-full font-label text-xs font-bold tracking-widest uppercase italic font-bold">AI Approved</span>
+                <span className="bg-primary/10 text-primary border border-primary/20 px-5 py-2 rounded-full font-label text-xs font-bold tracking-widest uppercase font-bold">AI Approved</span>
               </div>
             </div>
           </div>
         </div>
         
         <div className="relative z-10">
-          <h2 className="text-3xl font-display font-bold text-white mb-2 italic">Credit Intelligence, Reimagined.</h2>
-          <p className="text-text-muted text-lg mb-8 max-w-md italic">AI-powered credit assessment platform for modern lenders. Make smarter decisions, faster.</p>
+          <h2 className="text-3xl font-display font-bold text-white mb-2">Credit Intelligence, Reimagined.</h2>
+          <p className="text-text-muted text-lg mb-8 max-w-md">AI-powered credit assessment platform for modern lenders. Make smarter decisions, faster.</p>
           <div className="flex flex-wrap gap-3">
             {['1M+ Assessments', '$50B+ Underwritten', 'Instant Decisions'].map(s => (
               <div key={s} className="px-4 py-2 rounded-full bg-surface2 border border-border/50 backdrop-blur-md">
-                <span className="font-mono text-text-muted text-xs font-medium tracking-wider uppercase italic">{s}</span>
+                <span className="font-mono text-text-muted text-xs font-medium tracking-wider uppercase">{s}</span>
               </div>
             ))}
           </div>
@@ -120,75 +120,75 @@ export default function Login() {
       <section className="w-full md:w-[50%] p-8 md:p-16 flex flex-col justify-center items-center">
         <div className="w-full max-w-md glass-panel p-10 rounded-3xl border border-border/50 shadow-2xl">
           <div className="mb-8">
-            <h2 className="font-display text-3xl font-bold text-white mb-2 italic uppercase tracking-tighter shadow-glow">Welcome back</h2>
+            <h2 className="font-display text-3xl font-bold text-white mb-2 uppercase tracking-tighter shadow-glow">Welcome back</h2>
             <div className="flex gap-4 mt-6 p-1 bg-bg rounded-xl border border-border/30">
               <button onClick={() => { setLoginMode('password'); setOtpSent(false); setErrors({}); }}
-                className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all italic uppercase ${loginMode === 'password' ? 'bg-primary text-white shadow-glow' : 'text-text-muted hover:text-white'}`}>Password Login</button>
+                className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all uppercase ${loginMode === 'password' ? 'bg-primary text-white shadow-glow' : 'text-text-muted hover:text-white'}`}>Password Login</button>
               <button onClick={() => { setLoginMode('otp'); setErrors({}); }}
-                className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all italic uppercase ${loginMode === 'otp' ? 'bg-primary text-white shadow-glow' : 'text-text-muted hover:text-white'}`}>Email OTP</button>
+                className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all uppercase ${loginMode === 'otp' ? 'bg-primary text-white shadow-glow' : 'text-text-muted hover:text-white'}`}>Email OTP</button>
             </div>
           </div>
 
           {!otpSent ? (
             <form onSubmit={loginMode === 'password' ? handlePasswordLogin : handleSendOTP} className="space-y-6">
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-text-muted uppercase tracking-widest italic">Lender ID / Email</label>
+                <label className="block text-xs font-bold text-text-muted uppercase tracking-widest">Lender ID / Email</label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted/50 text-[18px]">mail</span>
                   <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                    placeholder="hello@oakcred.com" className="w-full pl-11 pr-4 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono italic" />
+                    placeholder="hello@oakcred.com" className="w-full pl-11 pr-4 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono" />
                 </div>
-                {errors.email && <p className="text-error text-xs font-medium italic mt-1">{errors.email}</p>}
+                {errors.email && <p className="text-error text-xs font-medium mt-1">{errors.email}</p>}
               </div>
 
               {loginMode === 'password' && (
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-center">
-                    <label className="block text-xs font-bold text-text-muted uppercase tracking-widest italic">Password</label>
-                    <a className="text-primary text-xs font-bold hover:text-white transition-colors italic" href="#">Forgot?</a>
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-widest">Password</label>
+                    <a className="text-primary text-xs font-bold hover:text-white transition-colors" href="#">Forgot?</a>
                   </div>
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted/50 text-[18px]">lock</span>
                     <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)}
-                      placeholder="••••••••" className="w-full pl-11 pr-11 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono italic" />
+                      placeholder="••••••••" className="w-full pl-11 pr-11 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono" />
                     <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted/50 hover:text-white transition-colors">
                       <span className="material-symbols-outlined text-[18px]">{showPassword ? 'visibility_off' : 'visibility'}</span>
                     </button>
                   </div>
-                  {errors.password && <p className="text-error text-xs font-medium italic mt-1">{errors.password}</p>}
+                  {errors.password && <p className="text-error text-xs font-medium mt-1">{errors.password}</p>}
                 </div>
               )}
 
-              {errors.form && <div className="p-3 bg-error/10 border border-error/50 rounded-xl text-error text-xs italic">{errors.form}</div>}
+              {errors.form && <div className="p-3 bg-error/10 border border-error/50 rounded-xl text-error text-xs">{errors.form}</div>}
 
-              <button type="submit" disabled={isLoading} className="w-full bg-gradient-primary text-white font-bold py-3.5 rounded-xl hover-glow transition-all uppercase tracking-widest italic disabled:opacity-50">
+              <button type="submit" disabled={isLoading} className="w-full bg-gradient-primary text-white font-bold py-3.5 rounded-xl hover-glow transition-all uppercase tracking-widest disabled:opacity-50">
                 {isLoading ? 'Processing...' : loginMode === 'password' ? 'Enter Portal' : 'Request OTP Code'}
               </button>
             </form>
           ) : (
             <form onSubmit={handleVerifyOTP} className="space-y-6">
               <div className="text-center mb-6">
-                <p className="text-sm text-text-muted italic">A security code has been sent to <br/><span className="text-primary font-mono font-bold tracking-tight">{email}</span></p>
-                <button type="button" onClick={() => setOtpSent(false)} className="text-xs text-primary font-bold mt-2 hover:underline italic uppercase tracking-tighter">Edit address</button>
+                <p className="text-sm text-text-muted">A security code has been sent to <br/><span className="text-primary font-mono font-bold tracking-tight">{email}</span></p>
+                <button type="button" onClick={() => setOtpSent(false)} className="text-xs text-primary font-bold mt-2 hover:underline uppercase tracking-tighter">Edit address</button>
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-text-muted uppercase tracking-widest text-center italic">Institutional Verification Code</label>
+                <label className="block text-xs font-bold text-text-muted uppercase tracking-widest text-center">Institutional Verification Code</label>
                 <input type="text" value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="000000" className="w-full text-center py-4 bg-bg border border-border/50 rounded-xl text-white text-3xl font-mono tracking-[0.5em] outline-none focus:border-primary transition-all placeholder:text-text-muted/20" />
-                {errors.otp && <p className="text-error text-xs text-center font-medium italic mt-1">{errors.otp}</p>}
+                {errors.otp && <p className="text-error text-xs text-center font-medium mt-1">{errors.otp}</p>}
               </div>
 
-              {errors.form && <div className="p-3 bg-error/10 border border-error/50 rounded-xl text-error text-xs text-center italic">{errors.form}</div>}
+              {errors.form && <div className="p-3 bg-error/10 border border-error/50 rounded-xl text-error text-xs text-center">{errors.form}</div>}
 
-              <button type="submit" disabled={isLoading || otp.length !== 6} className="w-full bg-gradient-primary text-white font-bold py-3.5 rounded-xl hover-glow transition-all uppercase tracking-widest italic disabled:opacity-50">
+              <button type="submit" disabled={isLoading || otp.length !== 6} className="w-full bg-gradient-primary text-white font-bold py-3.5 rounded-xl hover-glow transition-all uppercase tracking-widest disabled:opacity-50">
                 {isLoading ? 'Decrypting...' : 'Verify Identity'}
               </button>
             </form>
           )}
 
           <div className="mt-8 pt-6 border-t border-border/30 text-center">
-            <p className="text-sm text-text-muted italic">Don't have an account? <Link to="/signup" className="text-primary font-bold hover:text-white transition-colors underline underline-offset-4">Create Workspace</Link></p>
+            <p className="text-sm text-text-muted">Don't have an account? <Link to="/signup" className="text-primary font-bold hover:text-white transition-colors underline underline-offset-4">Create Workspace</Link></p>
           </div>
         </div>
       </section>

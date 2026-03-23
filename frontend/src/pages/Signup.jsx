@@ -46,11 +46,11 @@ export default function Signup() {
           <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-8 border border-primary/20">
             <span className="material-symbols-outlined text-primary text-4xl">mail</span>
           </div>
-          <h2 className="text-3xl font-display font-bold text-white mb-4 italic uppercase tracking-tighter">Check your email</h2>
-          <p className="text-text-muted text-lg leading-relaxed mb-10 italic">
+          <h2 className="text-3xl font-display font-bold text-white mb-4 uppercase tracking-tighter">Check your email</h2>
+          <p className="text-text-muted text-lg leading-relaxed mb-10">
             Verification link sent to <span className="text-primary font-mono font-bold tracking-tight underline underline-offset-4">{email}</span>
           </p>
-          <Link to="/login" className="px-10 py-4 bg-gradient-primary rounded-xl text-white font-bold hover-glow transition-all uppercase italic tracking-widest">Back to Login</Link>
+          <Link to="/login" className="px-10 py-4 bg-gradient-primary rounded-xl text-white font-bold hover-glow transition-all uppercase tracking-widest">Back to Login</Link>
         </div>
       </main>
     );
@@ -65,22 +65,22 @@ export default function Signup() {
 
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-8 h-8 rounded bg-gradient-primary flex items-center justify-center shadow-glow">
-            <span className="material-symbols-outlined text-white text-xl uppercase italic">account_tree</span>
+            <span className="material-symbols-outlined text-white text-xl uppercase">account_tree</span>
           </div>
-          <h1 className="font-display text-3xl font-bold tracking-tight text-white italic">Oak<span className="text-primary">Cred</span></h1>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-white">Oak<span className="text-primary">Cred</span></h1>
         </div>
         
         <div className="relative z-10">
-          <h2 className="text-5xl font-display font-light text-white mb-6 leading-tight italic">Join the <span className="font-bold text-primary italic text-6xl">Elite</span> AI Network.</h2>
-          <p className="text-text-muted text-xl mb-8 max-w-sm italic leading-relaxed">Institutional grade credit intelligence. Secure, automated, and precise.</p>
+          <h2 className="text-5xl font-display font-light text-white mb-6 leading-tight">Join the <span className="font-bold text-primary text-6xl">Elite</span> AI Network.</h2>
+          <p className="text-text-muted text-xl mb-8 max-w-sm leading-relaxed">Institutional grade credit intelligence. Secure, automated, and precise.</p>
           <div className="flex gap-4">
              <div className="glass-panel px-6 py-4 rounded-2xl border border-white/5 backdrop-blur-md">
-                <p className="text-2xl font-bold text-white italic">0.1s</p>
-                <p className="text-xs text-text-muted uppercase tracking-widest italic font-bold">Latency</p>
+                <p className="text-2xl font-bold text-white">0.1s</p>
+                <p className="text-xs text-text-muted uppercase tracking-widest font-bold">Latency</p>
              </div>
              <div className="glass-panel px-6 py-4 rounded-2xl border border-white/5 backdrop-blur-md">
-                <p className="text-2xl font-bold text-white italic">99.9%</p>
-                <p className="text-xs text-text-muted uppercase tracking-widest italic font-bold">Accuracy</p>
+                <p className="text-2xl font-bold text-white">99.9%</p>
+                <p className="text-xs text-text-muted uppercase tracking-widest font-bold">Accuracy</p>
              </div>
           </div>
         </div>
@@ -89,49 +89,49 @@ export default function Signup() {
       <section className="w-full md:w-[50%] p-8 md:p-16 flex flex-col justify-center items-center">
         <div className="w-full max-w-md glass-panel p-10 rounded-3xl border border-border/50 shadow-2xl backdrop-blur-xl">
           <div className="mb-8">
-            <h2 className="font-display text-3xl font-bold text-white mb-2 italic uppercase tracking-tighter shadow-glow">Create Account</h2>
-            <p className="text-text-muted italic text-sm">Initialize your institutional lender workspace</p>
+            <h2 className="font-display text-3xl font-bold text-white mb-2 uppercase tracking-tighter shadow-glow">Create Account</h2>
+            <p className="text-text-muted text-sm">Initialize your institutional lender workspace</p>
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-5" noValidate>
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-text-muted uppercase tracking-widest italic">Full Name</label>
+              <label className="block text-xs font-bold text-text-muted uppercase tracking-widest">Full Name</label>
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted/50 text-[18px]">person</span>
                 <input type="text" value={name} onChange={e => setName(e.target.value)}
-                  placeholder="Master Admin" className="w-full pl-11 pr-4 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono italic shadow-inner" />
+                  placeholder="Master Admin" className="w-full pl-11 pr-4 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono shadow-inner" />
               </div>
-              {errors.name && <p className="text-error text-xs italic mt-1">{errors.name}</p>}
+              {errors.name && <p className="text-error text-xs mt-1">{errors.name}</p>}
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-text-muted uppercase tracking-widest italic">Business Email</label>
+              <label className="block text-xs font-bold text-text-muted uppercase tracking-widest">Business Email</label>
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted/50 text-[18px]">mail</span>
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                  placeholder="admin@oakcred.com" className="w-full pl-11 pr-4 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono italic shadow-inner" />
+                  placeholder="admin@oakcred.com" className="w-full pl-11 pr-4 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono shadow-inner" />
               </div>
-              {errors.email && <p className="text-error text-xs italic mt-1">{errors.email}</p>}
+              {errors.email && <p className="text-error text-xs mt-1">{errors.email}</p>}
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-text-muted uppercase tracking-widest italic">Security Password</label>
+              <label className="block text-xs font-bold text-text-muted uppercase tracking-widest">Security Password</label>
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted/50 text-[18px]">lock</span>
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••" className="w-full pl-11 pr-4 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono italic shadow-inner" />
+                  placeholder="••••••••" className="w-full pl-11 pr-4 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono shadow-inner" />
               </div>
-              {errors.password && <p className="text-error text-xs italic mt-1">{errors.password}</p>}
+              {errors.password && <p className="text-error text-xs mt-1">{errors.password}</p>}
             </div>
 
-            {errors.form && <div className="p-3 bg-error/10 border border-error/50 rounded-xl text-error text-xs italic text-center">{errors.form}</div>}
+            {errors.form && <div className="p-3 bg-error/10 border border-error/50 rounded-xl text-error text-xs text-center">{errors.form}</div>}
 
-            <button type="submit" disabled={isLoading} className="w-full bg-gradient-primary text-white font-bold py-4 rounded-xl hover-glow transition-all uppercase tracking-widest italic disabled:opacity-50">
+            <button type="submit" disabled={isLoading} className="w-full bg-gradient-primary text-white font-bold py-4 rounded-xl hover-glow transition-all uppercase tracking-widest disabled:opacity-50">
               {isLoading ? 'Creating Gateway...' : 'Initialize Workspace'}
             </button>
           </form>
 
-          <footer className="mt-8 text-center text-sm text-text-muted italic">
+          <footer className="mt-8 text-center text-sm text-text-muted">
             Already verified? <Link to="/login" className="text-primary font-bold hover:text-white transition-colors underline underline-offset-4">Identity Sign In</Link>
           </footer>
         </div>
