@@ -6,6 +6,20 @@ export const useAuthStore = create((set, get) => ({
   isAuthenticated: !!localStorage.getItem('accessToken'),
   isLoading: false,
 
+  // Standard Password Login
+  login: async (email, password) => {
+    set({ isLoading: true });
+    try {
+      const data = await api.post('/auth/login', { email, password });
+      localStorage.setItem('accessToken', data.token);
+      set({ user: data.user, isAuthenticated: true, isLoading: false });
+      return data;
+    } catch (err) {
+      set({ isLoading: false });
+      throw err;
+    }
+  },
+
   // Custom OTP Send (via our backend SMTP)
   signInWithOTP: async (email) => {
     set({ isLoading: true });
@@ -33,9 +47,8 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Signup now just redirects to OTP login or sends OTP
+  // Signup redirect to OTP
   signUpWithEmail: async (email, password) => {
-    // For this custom flow, we'll just treat signup as "send me an OTP"
     return get().signInWithOTP(email);
   },
 
