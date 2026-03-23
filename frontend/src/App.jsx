@@ -45,14 +45,18 @@ export default function App() {
   useEffect(() => {
     fetchUser();
 
-    // Listen for Supabase Auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        await handleSSOCallback(session);
-      }
-    });
+    // Listens for Supabase Auth state changes only if client exists
+    let subscription = null;
+    if (supabase) {
+      const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          await handleSSOCallback(session);
+        }
+      });
+      subscription = data.subscription;
+    }
 
-    return () => subscription.unsubscribe();
+    return () => subscription?.unsubscribe();
   }, []);
 
   return (
