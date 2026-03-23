@@ -29,6 +29,11 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
+    - name: Get ECR Password
+      id: get-pass
+      run: |
+        echo "password=$(aws ecr get-login-password --region ${{ env.AWS_REGION }})" >> $GITHUB_OUTPUT
+
     - name: Build, tag, and push image to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -40,7 +45,7 @@ jobs:
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
       env:
-        ECR_PASSWORD: ${{ steps.login-ecr.outputs.password }}
+        ECR_PASSWORD: ${{ steps.get-pass.outputs.password }}
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       with:
         host: ${{ env.EC2_HOST }}
