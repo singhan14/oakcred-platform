@@ -84,10 +84,10 @@ jobs:
               environment:
                 - DATABASE_URL=postgresql://postgres:OakMaster2026!@db:5432/oakcred?schema=public
                 - REDIS_URL=redis://redis:6379
-                - JWT_SECRET=\${JWT_SECRET:-your_super_secret_jwt_key_for_production}
+                - JWT_SECRET=OakCred_Secure_2026!
                 - JWT_EXPIRES_IN=24h
                 - PORT=3000
-                - FRONTEND_URL=\${FRONTEND_URL}
+                - FRONTEND_URL=https://main.d1mr5i7uspn0e5.amplifyapp.com,https://oakcred.com,https://www.oakcred.com,http://localhost:5173
                 - NODE_ENV=production
               depends_on:
                 - db

@@ -21,8 +21,12 @@ const app = express();
 
 // ─── SECURITY ───────────────────────────────────────────────
 app.use(helmet());
+
+// Dynamic CORS based on config
+const origins = config.clientUrl ? config.clientUrl.split(',') : ['http://localhost:5173'];
+
 app.use(cors({
-  origin: config.clientUrl,
+  origin: origins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],

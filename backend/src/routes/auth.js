@@ -7,6 +7,9 @@ const { authenticate } = require('../middleware/auth');
 router.post('/otp/send', authLimiter, auth.sendOTP);
 router.post('/otp/verify', authLimiter, auth.verifyOTP);
 
+// Standard Password Login
+router.post('/login', authLimiter, auth.login);
+
 // Profile
 router.get('/me', authenticate, auth.me);
 
