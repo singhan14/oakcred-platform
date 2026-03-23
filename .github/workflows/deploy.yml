@@ -3,8 +3,6 @@ name: Deploy Backend to EC2
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'backend/**'
 
 env:
   AWS_REGION: eu-north-1
@@ -54,7 +52,6 @@ jobs:
           cd oakcred-platform/backend
           # Self-heal out-of-sync docker-compose
           cat <<EOF > docker-compose.yml
-          version: '3.8'
           services:
             db:
               image: postgres:14-alpine
