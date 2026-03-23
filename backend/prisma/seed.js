@@ -38,6 +38,29 @@ async function seed() {
   });
   console.log('✅ Created admin user:', admin.email);
 
+  // 2.5 Create Super Admin User
+  const superAdminPassword = await bcrypt.hash('OakCredAdmin2026!', 12);
+  const superAdmin = await prisma.user.upsert({
+    where: { email: 'admin@oakcred.com' },
+    update: {
+      password: superAdminPassword,
+      role: 'SUPER_ADMIN',
+      firmId: firm.id,
+      isVerified: true,
+      isActive: true,
+    },
+    create: {
+      email: 'admin@oakcred.com',
+      password: superAdminPassword,
+      name: 'OakCred Super Admin',
+      role: 'SUPER_ADMIN',
+      firmId: firm.id,
+      isVerified: true,
+      isActive: true,
+    },
+  });
+  console.log('✅ Created super admin:', superAdmin.email);
+
   // 3. Create Subscription
   await prisma.subscription.create({
     data: {
