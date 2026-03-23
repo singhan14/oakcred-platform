@@ -48,5 +48,48 @@ jobs:
         script: |
           aws ecr get-login-password --region ${{ env.AWS_REGION }} | sudo docker login --username AWS --password-stdin 077757636844.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
           cd oakcred-platform/backend
+          # Self-heal out-of-sync docker-compose
+          cat <<EOF > docker-compose.yml
+          version: '3.8'
+          services:
+            db:
+              image: postgres:14-alpine
+              restart: always
+              environment:
+                POSTGRES_USER: \${POSTGRES_USER:-creditiq}
+                POSTGRES_PASSWORD: \${POSTGRES_PASSWORD:-creditiq123}
+                POSTGRES_DB: \${POSTGRES_DB:-oakcred}
+              ports:
+                - "5432:5432"
+              volumes:
+                - pgdata:/var/lib/postgresql/data
+
+            redis:
+              image: redis:7-alpine
+              restart: always
+              ports:
+                - "6379:6379"
+
+            api:
+              image: 077757636844.dkr.ecr.eu-north-1.amazonaws.com/oakcred-backend:latest
+              restart: always
+              ports:
+                - "3000:3000"
+              environment:
+                - DATABASE_URL=postgresql://\${POSTGRES_USER:-creditiq}:\${POSTGRES_PASSWORD:-creditiq123}@db:5432/\${POSTGRES_DB:-oakcred}?schema=public
+                - REDIS_URL=redis://redis:6379
+                - JWT_SECRET=\${JWT_SECRET:-your_super_secret_jwt_key_for_production}
+                - JWT_EXPIRES_IN=24h
+                - PORT=3000
+                - FRONTEND_URL=\${FRONTEND_URL}
+                - NODE_ENV=production
+              depends_on:
+                - db
+                - redis
+              command: /bin/sh -c "npx prisma migrate deploy && (npm run seed || true) && node src/server.js"
+
+          volumes:
+            pgdata:
+          EOF
           sudo docker compose pull api
           sudo docker compose up -d api
