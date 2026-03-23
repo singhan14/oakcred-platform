@@ -23,18 +23,22 @@ const app = express();
 app.use(helmet());
 
 // Manual CORS logic for absolute production reliability
-const origins = config.clientUrl ? config.clientUrl.split(',') : ['http://localhost:5173'];
+const rawOrigins = config.clientUrl || '';
+const origins = rawOrigins.split(',').map(o => o.trim().toLowerCase());
 
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
+  const origin = (req.headers.origin || '').toLowerCase();
+  
+  // Allow if in whitelist OR if it's the current active Amplify domain
+  const isAllowed = origins.includes(origin) || origin.includes('amplifyapp.com');
+
+  if (isAllowed) {
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
   }
   
-  // Handle preflight
   if (req.method === 'OPTIONS') {
     return res.sendStatus(204);
   }
