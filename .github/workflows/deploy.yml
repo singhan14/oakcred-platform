@@ -41,12 +41,16 @@ jobs:
 
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
+      env:
+        ECR_PASSWORD: ${{ steps.login-ecr.outputs.password }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       with:
         host: ${{ env.EC2_HOST }}
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
+        envs: ECR_PASSWORD,ECR_REGISTRY
         script: |
-          aws ecr get-login-password --region ${{ env.AWS_REGION }} | sudo docker login --username AWS --password-stdin 077757636844.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          echo "$ECR_PASSWORD" | sudo docker login --username AWS --password-stdin $ECR_REGISTRY
           cd oakcred-platform/backend
           # Self-heal out-of-sync docker-compose
           cat <<EOF > docker-compose.yml
