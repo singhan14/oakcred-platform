@@ -37,6 +37,25 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
+  signUpWithEmail: async (email, password) => {
+    set({ isLoading: true });
+    try {
+      const { data, error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login`
+        }
+      });
+      if (error) throw error;
+      set({ isLoading: false });
+      return data;
+    } catch (err) {
+      set({ isLoading: false });
+      throw err;
+    }
+  },
+
   handleSSOCallback: async (session) => {
     if (!session?.access_token) return;
     set({ isLoading: true });
