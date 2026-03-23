@@ -145,6 +145,8 @@ model User {
   verificationToken String?
   resetToken        String?
   resetTokenExpiry  DateTime?
+  otpCode           String?
+  otpExpires        DateTime?
   lastLogin         DateTime?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt

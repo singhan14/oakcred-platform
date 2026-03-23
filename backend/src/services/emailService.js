@@ -1,68 +1,40 @@
-const config = require('../config');
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS, // This MUST be an App Password
+  },
+});
 
 /**
- * Email service — uses SendGrid in production, logs in mock mode.
+ * Sends a 6-digit OTP code to the user's email.
  */
-async function sendEmail({ to, subject, html }) {
-  if (config.sendgrid.apiKey === 'mock') {
-    console.log(`[MOCK EMAIL] To: ${to} | Subject: ${subject}`);
-    return { success: true, mock: true };
+exports.sendOTP = async (email, otp) => {
+  const mailOptions = {
+    from: `"OakCred Security" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: `Your OakCred Login Code: ${otp}`,
+    html: `
+      <div style="font-family: 'Inter', sans-serif; background-color: #0d0d0d; color: #ffffff; padding: 40px; border-radius: 12px; max-width: 500px; margin: auto; border: 1px solid #262626;">
+        <h2 style="color: #2D6A4F; font-size: 24px; margin-bottom: 20px;">OakCred Login Code</h2>
+        <p style="font-size: 16px; color: #a3a3a3; line-height: 1.5;">Enter the following 6-digit code to verify your identity and access your credit workspace.</p>
+        <div style="background-color: #1a1a1a; padding: 20px; text-align: center; border-radius: 8px; margin: 30px 0; border: 1px solid #333 text-decoration: none;">
+          <span style="font-size: 36px; font-weight: bold; letter-spacing: 12px; color: #ffffff;">${otp}</span>
+        </div>
+        <p style="font-size: 12px; color: #525252; margin-top: 20px;">This code will expire in 10 minutes. If you did not request this, please ignore this email.</p>
+        <hr style="border: 0; border-top: 1px solid #262626; margin: 30px 0;" />
+        <p style="font-size: 12px; color: #525252; text-align: center;">© ${new Date().getFullYear()} OakCred Platform. All rights reserved.</p>
+      </div>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    return true;
+  } catch (error) {
+    console.error('Error sending OTP email:', error);
+    throw new Error('Failed to send verification email.');
   }
-
-  const nodemailer = require('nodemailer');
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.sendgrid.net',
-    port: 587,
-    auth: {
-      user: 'apikey',
-      pass: config.sendgrid.apiKey,
-    },
-  });
-
-  await transporter.sendMail({
-    from: 'noreply@creditiq.in',
-    to,
-    subject,
-    html,
-  });
-
-  return { success: true };
-}
-
-async function sendVerificationEmail(email, token) {
-  const verifyUrl = `${config.clientUrl}/verify-email?token=${token}`;
-  return sendEmail({
-    to: email,
-    subject: 'CreditIQ — Verify Your Email',
-    html: `<p>Click <a href="${verifyUrl}">here</a> to verify your email.</p>
-           <p>Or copy this link: ${verifyUrl}</p>`,
-  });
-}
-
-async function sendPasswordResetEmail(email, token) {
-  const resetUrl = `${config.clientUrl}/reset-password?token=${token}`;
-  return sendEmail({
-    to: email,
-    subject: 'CreditIQ — Reset Password',
-    html: `<p>Click <a href="${resetUrl}">here</a> to reset your password.</p>
-           <p>This link expires in 1 hour.</p>`,
-  });
-}
-
-async function sendConsentRequestEmail(email, borrowerName, firmName, token) {
-  const consentUrl = `${config.clientUrl}/consent/${token}`;
-  return sendEmail({
-    to: email,
-    subject: `${firmName} — Consent Request for Financial Data`,
-    html: `<p>Dear ${borrowerName},</p>
-           <p>${firmName} is requesting access to your financial data for a credit assessment.</p>
-           <p>Click <a href="${consentUrl}">here</a> to review and approve.</p>`,
-  });
-}
-
-module.exports = {
-  sendEmail,
-  sendVerificationEmail,
-  sendPasswordResetEmail,
-  sendConsentRequestEmail,
 };
