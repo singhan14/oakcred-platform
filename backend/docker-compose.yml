@@ -19,7 +19,7 @@ services:
       - "6379:6379"
 
   api:
-    build: .
+    image: 077757636844.dkr.ecr.eu-north-1.amazonaws.com/oakcred-backend:latest
     restart: always
     ports:
       - "3000:3000"
