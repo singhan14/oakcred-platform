@@ -27,13 +27,11 @@ const rawOrigins = config.clientUrl || '';
 const origins = rawOrigins.split(',').map(o => o.trim().toLowerCase());
 
 app.use((req, res, next) => {
-  const origin = (req.headers.origin || '').toLowerCase();
+  const origin = req.headers.origin;
   
-  // Allow if in whitelist OR if it's the current active Amplify domain
-  const isAllowed = origins.includes(origin) || origin.includes('amplifyapp.com');
-
-  if (isAllowed) {
-    res.header('Access-Control-Allow-Origin', req.headers.origin);
+  // NUCLEAR OPTION: Always reflect the origin to ensure CORS passes
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin);
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
