@@ -41,23 +41,9 @@ function AppLayout() {
 
 export default function App() {
   const fetchUser = useAuthStore(s => s.fetchUser);
-  const handleSSOCallback = useAuthStore(s => s.handleSSOCallback);
 
   useEffect(() => {
     fetchUser();
-
-    // Listens for Supabase Auth state changes only if client exists
-    let subscription = null;
-    if (supabase) {
-      const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-          await handleSSOCallback(session);
-        }
-      });
-      subscription = data.subscription;
-    }
-
-    return () => subscription?.unsubscribe();
   }, []);
 
   return (
