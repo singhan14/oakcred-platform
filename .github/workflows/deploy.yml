@@ -62,7 +62,7 @@ jobs:
               image: postgres:14-alpine
               restart: always
               environment:
-                POSTGRES_USER: oak_admin
+                POSTGRES_USER: postgres
                 POSTGRES_PASSWORD: OakMaster2026!
                 POSTGRES_DB: oakcred
               ports:
@@ -82,7 +82,7 @@ jobs:
               ports:
                 - "3000:3000"
               environment:
-                - DATABASE_URL=postgresql://oak_admin:OakMaster2026!@db:5432/oakcred?schema=public
+                - DATABASE_URL=postgresql://postgres:OakMaster2026!@db:5432/oakcred?schema=public
                 - REDIS_URL=redis://redis:6379
                 - JWT_SECRET=\${JWT_SECRET:-your_super_secret_jwt_key_for_production}
                 - JWT_EXPIRES_IN=24h
