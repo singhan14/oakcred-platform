@@ -35,7 +35,7 @@ services:
       - db
       - redis
     # The command runs DB migrations safely then starts the app
-    command: /bin/sh -c "npx prisma migrate deploy && npm run seed && node src/server.js"
+    command: /bin/sh -c "npx prisma migrate deploy && (npm run seed || true) && node src/server.js"
 
 volumes:
   pgdata:
