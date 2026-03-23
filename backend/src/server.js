@@ -1,3 +1,7 @@
+/**
+ * OakCred Backend Server
+ * Synchronizing Production Credentials
+ */
 const app = require('./app');
 const config = require('./config');
 
