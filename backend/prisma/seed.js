@@ -24,12 +24,12 @@ async function seed() {
   console.log('✅ Created firm:', firm.name);
 
   // 2. Create Admin User
-  const hashedPassword = await bcrypt.hash('Demo@1234', 12);
+  const hashedPassword = await bcrypt.hash('OakCred@2026', 12);
   const admin = await prisma.user.create({
     data: {
-      email: 'demo@oakcred.com',
+      email: 'singhan@oakcred.com',
       password: hashedPassword,
-      name: 'Demo Admin',
+      name: 'Singhan Yadav',
       role: 'CA_ADMIN',
       firmId: firm.id,
       isVerified: true,
@@ -272,9 +272,9 @@ async function seed() {
   }
 
   console.log('\n🎉 Seed complete!\n');
-  console.log('Demo credentials:');
-  console.log('  Email:    demo@oakcred.com');
-  console.log('  Password: Demo@1234\n');
+  console.log('Admin credentials:');
+  console.log('  Email:    singhan@oakcred.com');
+  console.log('  Password: OakCred@2026\n');
 }
 
 seed()
