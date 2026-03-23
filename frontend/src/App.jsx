@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
+import { supabase } from './config/supabase';
 import { useAuthStore } from './store/authStore';
 import ErrorBoundary from './components/ErrorBoundary';
 import RequireAuth from './components/RequireAuth';
@@ -39,7 +40,20 @@ function AppLayout() {
 
 export default function App() {
   const fetchUser = useAuthStore(s => s.fetchUser);
-  useEffect(() => { fetchUser(); }, []);
+  const handleSSOCallback = useAuthStore(s => s.handleSSOCallback);
+
+  useEffect(() => {
+    fetchUser();
+
+    // Listen for Supabase Auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        await handleSSOCallback(session);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <ErrorBoundary>
