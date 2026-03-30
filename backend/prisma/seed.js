@@ -106,37 +106,48 @@ async function seed() {
   // 5. Create 24 months GST data per MSME borrower
   for (const borrower of borrowers.filter(b => b.type === 'MSME')) {
     const baseTurnover = 500000 + Math.random() * 2000000;
+    const now = new Date();
     for (let i = 0; i < 24; i++) {
-      const date = new Date();
-      date.setMonth(date.getMonth() - i);
-      const period = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      // Reliable month subtraction: use year/month arithmetic to avoid day-of-month overflow
+      let year = now.getFullYear();
+      let month = now.getMonth() - i; // 0-indexed
+      while (month < 0) { month += 12; year -= 1; }
+      const period = `${year}-${String(month + 1).padStart(2, '0')}`;
 
-      const seasonalMultiplier = 1 + 0.15 * Math.sin((date.getMonth() / 12) * 2 * Math.PI);
+      const seasonalMultiplier = 1 + 0.15 * Math.sin((month / 12) * 2 * Math.PI);
       const turnover = Math.round(baseTurnover * seasonalMultiplier * (0.9 + Math.random() * 0.2));
       const itcEligible = Math.round(turnover * 0.18 * 0.7);
       const itcClaimed = Math.round(itcEligible * (0.95 + Math.random() * 0.08));
 
       const filingRand = Math.random();
       let filingStatus = 'FILED';
-      let filedOn = new Date(date.getFullYear(), date.getMonth() + 1, 10 + Math.floor(Math.random() * 10));
+      let filedOn = new Date(year, month + 1, 10 + Math.floor(Math.random() * 10));
 
       if (filingRand > 0.92 && i > 8) {
         filingStatus = 'NOT_FILED';
         filedOn = null;
       } else if (filingRand > 0.82) {
         filingStatus = 'LATE_FILED';
-        filedOn = new Date(date.getFullYear(), date.getMonth() + 2, Math.floor(Math.random() * 20) + 1);
+        filedOn = new Date(year, month + 2, Math.floor(Math.random() * 20) + 1);
       }
 
-      await prisma.gSTData.create({
-        data: {
+      await prisma.gSTData.upsert({
+        where: {
+          borrowerId_period_returnType: {
+            borrowerId: borrower.id,
+            period,
+            returnType: 'GSTR3B',
+          },
+        },
+        update: {},
+        create: {
           borrowerId: borrower.id,
           gstin: borrower.gstin,
           period,
           returnType: 'GSTR3B',
           filingStatus,
           filedOn,
-          dueDate: new Date(date.getFullYear(), date.getMonth() + 1, 20),
+          dueDate: new Date(year, month + 1, 20),
           turnover,
           itcClaimed,
           itcEligible,

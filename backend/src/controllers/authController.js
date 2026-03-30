@@ -1,5 +1,7 @@
 const prisma = require('../config/database');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const config = require('../config');
 const emailService = require('../services/emailService');
 const { v4: uuidv4 } = require('uuid');
 
@@ -28,7 +30,7 @@ const sendOTP = async (req, res) => {
           email,
           name: email.split('@')[0],
           password: 'CUSTOM_OTP_USER',
-          role: 'ADMIN', // Default to ADMIN for new signups
+          role: 'CA_ADMIN', // Default to CA_ADMIN for new signups
           otpCode: otp,
           otpExpires,
           firmId: '00000000-0000-0000-0000-000000000000' // Placeholder (will be updated on verify)
@@ -97,7 +99,7 @@ const verifyOTP = async (req, res) => {
     // 3. Generate JWT
     const token = jwt.sign(
       { userId: updatedUser.id, firmId: updatedUser.firmId, role: updatedUser.role },
-      process.env.JWT_SECRET || 'oakcred_secret_2026',
+      config.jwt.secret,
       { expiresIn: '7d' }
     );
 
@@ -136,15 +138,15 @@ const login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Direct comparison for seeded admins, or bcrypt for production users
-    // Since we are recovering the account, we check for a match.
-    if (user.password !== password) {
+    // Compare password using bcrypt for hashed passwords
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     const token = jwt.sign(
       { userId: user.id, firmId: user.firmId, role: user.role },
-      process.env.JWT_SECRET || 'oakcred_secret_2026',
+      config.jwt.secret,
       { expiresIn: '7d' }
     );
 

@@ -1,5 +1,3 @@
-// Prisma Schema for CreditIQ
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,7 +7,279 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ─── ENUMS ──────────────────────────────────────────────────
+model User {
+  id                String             @id @default(uuid())
+  email             String             @unique
+  password          String
+  name              String
+  role              UserRole           @default(CA_STAFF)
+  firmId            String
+  isVerified        Boolean            @default(false)
+  isActive          Boolean            @default(true)
+  verificationToken String?
+  resetToken        String?
+  resetTokenExpiry  DateTime?
+  lastLogin         DateTime?
+  otpCode           String?
+  otpExpires        DateTime?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  auditLogs         AuditLog[]
+  createdBorrowers  Borrower[]         @relation("CreatedByUser")
+  assessments       CreditAssessment[] @relation("AssessmentCreator")
+  firm              Firm               @relation(fields: [firmId], references: [id])
+
+  @@index([firmId])
+  @@index([email])
+}
+
+model Firm {
+  id                 String             @id @default(uuid())
+  name               String
+  type               FirmType           @default(CA_FIRM)
+  gstin              String?
+  pan                String?
+  icaiNumber         String?
+  address            String?
+  city               String?
+  state              String?
+  pincode            String?
+  phone              String?
+  email              String?
+  logoUrl            String?
+  subscriptionPlan   SubscriptionPlan   @default(TRIAL)
+  subscriptionStatus SubscriptionStatus @default(TRIAL)
+  subscriptionExpiry DateTime?
+  razorpayCustomerId String?
+  razorpaySubId      String?
+  createdAt          DateTime           @default(now())
+  auditLogs          AuditLog[]
+  borrowers          Borrower[]
+  consentRequests    ConsentRequest[]
+  assessments        CreditAssessment[]
+  subscriptions      Subscription[]
+  users              User[]
+}
+
+model Borrower {
+  id               String                    @id @default(uuid())
+  firmId           String
+  name             String
+  type             BorrowerType              @default(INDIVIDUAL)
+  gstin            String?
+  pan              String
+  udyamNumber      String?
+  dateOfBirth      DateTime?
+  businessName     String?
+  industry         String?
+  city             String?
+  state            String?
+  phone            String?
+  email            String?
+  consentStatus    ConsentStatus             @default(PENDING)
+  consentToken     String?                   @unique
+  consentExpiry    DateTime?
+  consentDataTypes Json?
+  createdById      String
+  isDeleted        Boolean                   @default(false)
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+  bankStatements   BankStatementData[]
+  createdBy        User                      @relation("CreatedByUser", fields: [createdById], references: [id])
+  firm             Firm                      @relation(fields: [firmId], references: [id])
+  consentRequests  ConsentRequest[]
+  assessments      CreditAssessment[]
+  gstData          GSTData[]
+  itrData          ITRData[]
+  monitors         PostDisbursementMonitor[]
+
+  @@index([firmId])
+  @@index([pan])
+  @@index([gstin])
+}
+
+model CreditAssessment {
+  id                     String                    @id @default(uuid())
+  borrowerId             String
+  firmId                 String
+  createdById            String
+  modelLayer             ModelLayer
+  overallScore           Float
+  verdict                Verdict
+  confidenceLevel        ConfidenceLevel
+  gstScore               Float?
+  cashFlowScore          Float?
+  taxScore               Float?
+  debtScore              Float?
+  stabilityScore         Float?
+  behavioralScore        Float?
+  dscr                   Decimal?
+  estimatedMonthlyIncome Decimal?
+  requestedLoanAmount    Decimal
+  requestedTenureMonths  Int
+  loanPurpose            String?
+  flags                  Json?
+  recommendations        Json?
+  lenderMatches          Json?
+  reportUrl              String?
+  reportGeneratedAt      DateTime?
+  dataSourcesUsed        Json?
+  rawInputData           Json?
+  createdAt              DateTime                  @default(now())
+  borrower               Borrower                  @relation(fields: [borrowerId], references: [id])
+  createdBy              User                      @relation("AssessmentCreator", fields: [createdById], references: [id])
+  firm                   Firm                      @relation(fields: [firmId], references: [id])
+  monitors               PostDisbursementMonitor[]
+
+  @@index([borrowerId])
+  @@index([firmId])
+}
+
+model GSTData {
+  id           String       @id @default(uuid())
+  borrowerId   String
+  gstin        String
+  period       String
+  returnType   ReturnType
+  filingStatus FilingStatus
+  filedOn      DateTime?
+  dueDate      DateTime?
+  turnover     Decimal      @default(0)
+  itcClaimed   Decimal      @default(0)
+  itcEligible  Decimal      @default(0)
+  taxLiability Decimal      @default(0)
+  fetchedAt    DateTime     @default(now())
+  source       DataSource   @default(API)
+  borrower     Borrower     @relation(fields: [borrowerId], references: [id])
+
+  @@unique([borrowerId, period, returnType])
+  @@index([borrowerId])
+}
+
+model ITRData {
+  id             String          @id @default(uuid())
+  borrowerId     String
+  pan            String
+  assessmentYear String
+  filingStatus   ITRFilingStatus
+  filedOn        DateTime?
+  grossIncome    Decimal         @default(0)
+  taxableIncome  Decimal         @default(0)
+  taxPaid        Decimal         @default(0)
+  refundAmount   Decimal         @default(0)
+  incomeSource   IncomeSource    @default(BUSINESS)
+  fetchedAt      DateTime        @default(now())
+  source         DataSource      @default(PDF_UPLOAD)
+  borrower       Borrower        @relation(fields: [borrowerId], references: [id])
+
+  @@unique([borrowerId, assessmentYear])
+  @@index([borrowerId])
+}
+
+model BankStatementData {
+  id                     String     @id @default(uuid())
+  borrowerId             String
+  bankName               String
+  accountNumber          String
+  periodFrom             DateTime
+  periodTo               DateTime
+  avgMonthlyBalance      Decimal    @default(0)
+  avgMonthlyInflow       Decimal    @default(0)
+  avgMonthlyOutflow      Decimal    @default(0)
+  bounceCount            Int        @default(0)
+  salaryDetected         Boolean    @default(false)
+  estimatedSalary        Decimal?
+  detectedEMIs           Json?
+  totalEMIBurden         Decimal    @default(0)
+  inflowConsistencyScore Float      @default(0)
+  rawTransactionCount    Int        @default(0)
+  fetchedAt              DateTime   @default(now())
+  source                 DataSource @default(PDF_UPLOAD)
+  borrower               Borrower   @relation(fields: [borrowerId], references: [id])
+
+  @@index([borrowerId])
+}
+
+model PostDisbursementMonitor {
+  id                        String             @id @default(uuid())
+  assessmentId              String
+  borrowerId                String
+  loanDisbursedOn           DateTime
+  loanAmount                Decimal
+  lenderName                String
+  tenureMonths              Int
+  disbursementStatus        DisbursementStatus @default(ACTIVE)
+  lastEMIDate               DateTime?
+  emisMissed                Int                @default(0)
+  emisOnTime                Int                @default(0)
+  gstTurnoverAtDisbursement Decimal?
+  gstTurnoverCurrent        Decimal?
+  bankBalanceTrend          BankBalanceTrend   @default(STABLE)
+  monitoringScore           Float              @default(100)
+  riskFlag                  RiskFlag           @default(NONE)
+  outcomeLabel              OutcomeLabel?
+  lastCheckedAt             DateTime?
+  createdAt                 DateTime           @default(now())
+  assessment                CreditAssessment   @relation(fields: [assessmentId], references: [id])
+  borrower                  Borrower           @relation(fields: [borrowerId], references: [id])
+
+  @@index([borrowerId])
+  @@index([assessmentId])
+}
+
+model Subscription {
+  id                        String             @id @default(uuid())
+  firmId                    String
+  plan                      SubscriptionPlan
+  status                    SubscriptionStatus @default(INACTIVE)
+  razorpaySubId             String?
+  currentPeriodStart        DateTime?
+  currentPeriodEnd          DateTime?
+  assessmentsUsedThisPeriod Int                @default(0)
+  assessmentLimit           Int                @default(20)
+  createdAt                 DateTime           @default(now())
+  updatedAt                 DateTime           @updatedAt
+  firm                      Firm               @relation(fields: [firmId], references: [id])
+
+  @@index([firmId])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  firmId    String?
+  action    String
+  entity    String
+  entityId  String?
+  ipAddress String?
+  userAgent String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  firm      Firm?    @relation(fields: [firmId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([firmId])
+  @@index([action])
+}
+
+model ConsentRequest {
+  id           String               @id @default(uuid())
+  borrowerId   String
+  firmId       String
+  token        String               @unique
+  dataTypes    Json
+  validityDays Int                  @default(365)
+  status       ConsentRequestStatus @default(PENDING)
+  respondedAt  DateTime?
+  expiresAt    DateTime
+  createdAt    DateTime             @default(now())
+  borrower     Borrower             @relation(fields: [borrowerId], references: [id])
+  firm         Firm                 @relation(fields: [firmId], references: [id])
+
+  @@index([borrowerId])
+  @@index([token])
+}
 
 enum UserRole {
   CA_ADMIN
@@ -128,284 +398,4 @@ enum ConsentRequestStatus {
   APPROVED
   REJECTED
   EXPIRED
-}
-
-// ─── MODELS ─────────────────────────────────────────────────
-
-model User {
-  id                String    @id @default(uuid())
-  email             String    @unique
-  password          String
-  name              String
-  role              UserRole  @default(CA_STAFF)
-  firmId            String
-  firm              Firm      @relation(fields: [firmId], references: [id])
-  isVerified        Boolean   @default(false)
-  isActive          Boolean   @default(true)
-  verificationToken String?
-  resetToken        String?
-  resetTokenExpiry  DateTime?
-  otpCode           String?
-  otpExpires        DateTime?
-  lastLogin         DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  createdBorrowers  Borrower[]        @relation("CreatedByUser")
-  assessments       CreditAssessment[] @relation("AssessmentCreator")
-  auditLogs         AuditLog[]
-
-  @@index([firmId])
-  @@index([email])
-}
-
-model Firm {
-  id                  String             @id @default(uuid())
-  name                String
-  type                FirmType           @default(CA_FIRM)
-  gstin               String?
-  pan                 String?
-  icaiNumber          String?
-  address             String?
-  city                String?
-  state               String?
-  pincode             String?
-  phone               String?
-  email               String?
-  logoUrl             String?
-  subscriptionPlan    SubscriptionPlan   @default(TRIAL)
-  subscriptionStatus  SubscriptionStatus @default(TRIAL)
-  subscriptionExpiry  DateTime?
-  razorpayCustomerId  String?
-  razorpaySubId       String?
-  createdAt           DateTime           @default(now())
-
-  users               User[]
-  borrowers           Borrower[]
-  assessments         CreditAssessment[]
-  subscriptions       Subscription[]
-  auditLogs           AuditLog[]
-  consentRequests     ConsentRequest[]
-}
-
-model Borrower {
-  id               String        @id @default(uuid())
-  firmId           String
-  firm             Firm          @relation(fields: [firmId], references: [id])
-  name             String
-  type             BorrowerType  @default(INDIVIDUAL)
-  gstin            String?
-  pan              String
-  udyamNumber      String?
-  dateOfBirth      DateTime?
-  businessName     String?
-  industry         String?
-  city             String?
-  state            String?
-  phone            String?
-  email            String?
-  consentStatus    ConsentStatus @default(PENDING)
-  consentToken     String?       @unique
-  consentExpiry    DateTime?
-  consentDataTypes Json?
-  createdById      String
-  createdBy        User          @relation("CreatedByUser", fields: [createdById], references: [id])
-  isDeleted        Boolean       @default(false)
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-
-  gstData          GSTData[]
-  itrData          ITRData[]
-  bankStatements   BankStatementData[]
-  assessments      CreditAssessment[]
-  monitors         PostDisbursementMonitor[]
-  consentRequests  ConsentRequest[]
-
-  @@index([firmId])
-  @@index([pan])
-  @@index([gstin])
-}
-
-model CreditAssessment {
-  id                    String          @id @default(uuid())
-  borrowerId            String
-  borrower              Borrower        @relation(fields: [borrowerId], references: [id])
-  firmId                String
-  firm                  Firm            @relation(fields: [firmId], references: [id])
-  createdById           String
-  createdBy             User            @relation("AssessmentCreator", fields: [createdById], references: [id])
-  modelLayer            ModelLayer
-  overallScore          Float
-  verdict               Verdict
-  confidenceLevel       ConfidenceLevel
-  gstScore              Float?
-  cashFlowScore         Float?
-  taxScore              Float?
-  debtScore             Float?
-  stabilityScore        Float?
-  behavioralScore       Float?
-  dscr                  Decimal?
-  estimatedMonthlyIncome Decimal?
-  requestedLoanAmount   Decimal
-  requestedTenureMonths Int
-  loanPurpose           String?
-  flags                 Json?
-  recommendations       Json?
-  lenderMatches         Json?
-  reportUrl             String?
-  reportGeneratedAt     DateTime?
-  dataSourcesUsed       Json?
-  rawInputData          Json?
-  createdAt             DateTime        @default(now())
-
-  monitors              PostDisbursementMonitor[]
-
-  @@index([borrowerId])
-  @@index([firmId])
-}
-
-model GSTData {
-  id            String       @id @default(uuid())
-  borrowerId    String
-  borrower      Borrower     @relation(fields: [borrowerId], references: [id])
-  gstin         String
-  period        String       // YYYY-MM
-  returnType    ReturnType
-  filingStatus  FilingStatus
-  filedOn       DateTime?
-  dueDate       DateTime?
-  turnover      Decimal      @default(0)
-  itcClaimed    Decimal      @default(0)
-  itcEligible   Decimal      @default(0)
-  taxLiability  Decimal      @default(0)
-  fetchedAt     DateTime     @default(now())
-  source        DataSource   @default(API)
-
-  @@unique([borrowerId, period, returnType])
-  @@index([borrowerId])
-}
-
-model ITRData {
-  id              String          @id @default(uuid())
-  borrowerId      String
-  borrower        Borrower        @relation(fields: [borrowerId], references: [id])
-  pan             String
-  assessmentYear  String          // e.g. 2024-25
-  filingStatus    ITRFilingStatus
-  filedOn         DateTime?
-  grossIncome     Decimal         @default(0)
-  taxableIncome   Decimal         @default(0)
-  taxPaid         Decimal         @default(0)
-  refundAmount    Decimal         @default(0)
-  incomeSource    IncomeSource    @default(BUSINESS)
-  fetchedAt       DateTime        @default(now())
-  source          DataSource      @default(PDF_UPLOAD)
-
-  @@unique([borrowerId, assessmentYear])
-  @@index([borrowerId])
-}
-
-model BankStatementData {
-  id                     String     @id @default(uuid())
-  borrowerId             String
-  borrower               Borrower   @relation(fields: [borrowerId], references: [id])
-  bankName               String
-  accountNumber          String     // last 4 digits only
-  periodFrom             DateTime
-  periodTo               DateTime
-  avgMonthlyBalance      Decimal    @default(0)
-  avgMonthlyInflow       Decimal    @default(0)
-  avgMonthlyOutflow      Decimal    @default(0)
-  bounceCount            Int        @default(0)
-  salaryDetected         Boolean    @default(false)
-  estimatedSalary        Decimal?
-  detectedEMIs           Json?
-  totalEMIBurden         Decimal    @default(0)
-  inflowConsistencyScore Float      @default(0)
-  rawTransactionCount    Int        @default(0)
-  fetchedAt              DateTime   @default(now())
-  source                 DataSource @default(PDF_UPLOAD)
-
-  @@index([borrowerId])
-}
-
-model PostDisbursementMonitor {
-  id                       String              @id @default(uuid())
-  assessmentId             String
-  assessment               CreditAssessment    @relation(fields: [assessmentId], references: [id])
-  borrowerId               String
-  borrower                 Borrower            @relation(fields: [borrowerId], references: [id])
-  loanDisbursedOn          DateTime
-  loanAmount               Decimal
-  lenderName               String
-  tenureMonths             Int
-  disbursementStatus       DisbursementStatus  @default(ACTIVE)
-  lastEMIDate              DateTime?
-  emisMissed               Int                 @default(0)
-  emisOnTime               Int                 @default(0)
-  gstTurnoverAtDisbursement Decimal?
-  gstTurnoverCurrent       Decimal?
-  bankBalanceTrend         BankBalanceTrend    @default(STABLE)
-  monitoringScore          Float               @default(100)
-  riskFlag                 RiskFlag            @default(NONE)
-  outcomeLabel             OutcomeLabel?
-  lastCheckedAt            DateTime?
-  createdAt                DateTime            @default(now())
-
-  @@index([borrowerId])
-  @@index([assessmentId])
-}
-
-model Subscription {
-  id                       String             @id @default(uuid())
-  firmId                   String
-  firm                     Firm               @relation(fields: [firmId], references: [id])
-  plan                     SubscriptionPlan
-  status                   SubscriptionStatus @default(INACTIVE)
-  razorpaySubId            String?
-  currentPeriodStart       DateTime?
-  currentPeriodEnd         DateTime?
-  assessmentsUsedThisPeriod Int               @default(0)
-  assessmentLimit          Int                @default(20)
-  createdAt                DateTime           @default(now())
-  updatedAt                DateTime           @updatedAt
-
-  @@index([firmId])
-}
-
-model AuditLog {
-  id        String   @id @default(uuid())
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
-  firmId    String?
-  firm      Firm?    @relation(fields: [firmId], references: [id])
-  action    String
-  entity    String
-  entityId  String?
-  ipAddress String?
-  userAgent String?
-  metadata  Json?
-  createdAt DateTime @default(now())
-
-  @@index([userId])
-  @@index([firmId])
-  @@index([action])
-}
-
-model ConsentRequest {
-  id           String               @id @default(uuid())
-  borrowerId   String
-  borrower     Borrower             @relation(fields: [borrowerId], references: [id])
-  firmId       String
-  firm         Firm                 @relation(fields: [firmId], references: [id])
-  token        String               @unique
-  dataTypes    Json
-  validityDays Int                  @default(365)
-  status       ConsentRequestStatus @default(PENDING)
-  respondedAt  DateTime?
-  expiresAt    DateTime
-  createdAt    DateTime             @default(now())
-
-  @@index([borrowerId])
-  @@index([token])
 }
