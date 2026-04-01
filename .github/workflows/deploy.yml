@@ -89,6 +89,8 @@ jobs:
                 - PORT=3000
                 - FRONTEND_URL=https://main.d1mr5i7uspn0e5.amplifyapp.com,https://oakcred.com,https://www.oakcred.com,http://localhost:5173
                 - NODE_ENV=production
+                - EMAIL_USER=singhan@oakcred.com
+                - EMAIL_PASS=vqnw dllb lssc rfzg
               depends_on:
                 - db
                 - redis
