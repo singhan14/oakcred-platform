@@ -17,7 +17,8 @@ async function parseBankStatement(buffer, mimetype) {
       return await parseCsvBankStatement(buffer);
     } else {
       const data = await pdfParse(buffer);
-      return extractMetricsFromText(data.text);
+      const { extractBankMetrics } = require('./aiParser');
+      return await extractBankMetrics(data.text);
     }
   } catch (err) {
     console.warn('[BANK PARSER] Parsing failed, generating mock metrics:', err.message);

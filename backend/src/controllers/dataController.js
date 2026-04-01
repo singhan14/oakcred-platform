@@ -101,18 +101,8 @@ exports.uploadITR = async (req, res, next) => {
       const data = await pdfParse(req.file.buffer);
       const text = data.text;
 
-      // Extract fields using regex
-      const ayMatch = text.match(/Assessment Year[:\s]*(\d{4}-\d{2})/i);
-      const incomeMatch = text.match(/Gross Total Income[:\s]*[\u20B9,]*\s*([\d,]+)/i);
-      const taxMatch = text.match(/Tax Paid[:\s]*[\u20B9,]*\s*([\d,]+)/i);
-      const panMatch = text.match(/PAN[:\s]*([A-Z]{5}\d{4}[A-Z])/i);
-
-      extractedData = {
-        assessmentYear: ayMatch ? ayMatch[1] : `${new Date().getFullYear() - 1}-${String(new Date().getFullYear()).slice(2)}`,
-        grossIncome: incomeMatch ? parseFloat(incomeMatch[1].replace(/,/g, '')) : 0,
-        taxPaid: taxMatch ? parseFloat(taxMatch[1].replace(/,/g, '')) : 0,
-        pan: panMatch ? panMatch[1] : borrower.pan,
-      };
+      const { extractITR } = require('../services/aiParser');
+      extractedData = await extractITR(text, borrower.pan);
     } catch (parseErr) {
       console.warn('[ITR] Parse failed, using manual defaults:', parseErr.message);
       extractedData = {
