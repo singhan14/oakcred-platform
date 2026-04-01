@@ -33,7 +33,7 @@ export default function Login() {
       toast.success('Welcome back!');
       navigate('/dashboard');
     } catch (err) {
-      const msg = err?.error_description || err?.message || 'Invalid credentials.';
+      const msg = err?.error || err?.error_description || err?.message || 'Invalid credentials.';
       setErrors({ form: msg });
       toast.error(msg);
     }
