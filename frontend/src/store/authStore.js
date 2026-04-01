@@ -47,9 +47,17 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Signup redirect to OTP
-  signUpWithEmail: async (email, password) => {
-    return get().signInWithOTP(email);
+  // Dedicated Signup
+  signUpWithEmail: async (email, password, name) => {
+    set({ isLoading: true });
+    try {
+      const data = await api.post('/auth/signup', { email, password, name });
+      set({ isLoading: false });
+      return data;
+    } catch (err) {
+      set({ isLoading: false });
+      throw err;
+    }
   },
 
   logout: async () => {

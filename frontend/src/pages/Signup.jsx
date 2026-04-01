@@ -9,9 +9,10 @@ export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [otp, setOtp] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [errors, setErrors] = useState({});
-  const { signUpWithEmail, isLoading } = useAuthStore();
+  const { signUpWithEmail, verifyOTP, isLoading } = useAuthStore();
   const navigate = useNavigate();
 
   const validate = () => {
@@ -29,11 +30,28 @@ export default function Signup() {
     e.preventDefault();
     if (!validate()) return;
     try {
-      await signUpWithEmail(email, password);
+      await signUpWithEmail(email, password, name);
       setIsSuccess(true);
-      toast.success('Sign up successful!');
+      toast.success('Registration code sent to email!');
     } catch (err) {
       const msg = err?.message || 'Failed to sign up.';
+      setErrors({ form: msg });
+      toast.error(msg);
+    }
+  };
+
+  const handleVerifyOTP = async (e) => {
+    e.preventDefault();
+    if (!otp || otp.length !== 6) {
+      setErrors({ otp: 'Enter 6-digit code' });
+      return;
+    }
+    try {
+      await verifyOTP(email, otp);
+      toast.success('Workspace created and identity verified!');
+      navigate('/dashboard');
+    } catch (err) {
+      const msg = err?.message || 'Invalid or expired code.';
       setErrors({ form: msg });
       toast.error(msg);
     }
@@ -42,15 +60,31 @@ export default function Signup() {
   if (isSuccess) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-bg p-6 text-center">
-        <div className="glass-panel p-12 rounded-3xl max-w-lg border border-border/50 shadow-glow backdrop-blur-xl">
+        <div className="glass-panel p-12 rounded-3xl w-full max-w-lg border border-border/50 shadow-glow backdrop-blur-xl">
           <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-8 border border-primary/20">
             <span className="material-symbols-outlined text-primary text-4xl">mail</span>
           </div>
-          <h2 className="text-3xl font-display font-bold text-white mb-4 uppercase tracking-tighter">Check your email</h2>
-          <p className="text-text-muted text-lg leading-relaxed mb-10">
-            Verification link sent to <span className="text-primary font-mono font-bold tracking-tight underline underline-offset-4">{email}</span>
+          <h2 className="text-3xl font-display font-bold text-white mb-4 uppercase tracking-tighter">Verify Identity</h2>
+          <p className="text-sm text-text-muted leading-relaxed mb-6">
+            A security code has been sent to <br/> <span className="text-primary font-mono font-bold tracking-tight">{email}</span>
           </p>
-          <Link to="/login" className="px-10 py-4 bg-gradient-primary rounded-xl text-white font-bold hover-glow transition-all uppercase tracking-widest">Back to Login</Link>
+          
+          <form onSubmit={handleVerifyOTP} className="space-y-6">
+            <div className="space-y-2">
+              <input type="text" value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                placeholder="000000" className="w-full text-center py-4 bg-bg border border-border/50 rounded-xl text-white text-3xl font-mono tracking-[0.5em] outline-none focus:border-primary transition-all placeholder:text-text-muted/20" />
+              {errors.otp && <p className="text-error text-xs text-center font-medium">{errors.otp}</p>}
+              {errors.form && <div className="p-3 bg-error/10 border border-error/50 rounded-xl text-error text-xs text-center">{errors.form}</div>}
+            </div>
+            
+            <button type="submit" disabled={isLoading || otp.length !== 6} className="w-full bg-gradient-primary text-white font-bold py-4 rounded-xl hover-glow transition-all uppercase tracking-widest disabled:opacity-50">
+              {isLoading ? 'Decrypting...' : 'Complete Profile'}
+            </button>
+          </form>
+          
+          <div className="mt-8 text-xs text-text-muted">
+             <button onClick={() => setIsSuccess(false)} className="text-primary font-bold hover:underline uppercase tracking-widest">Back to Registration</button>
+          </div>
         </div>
       </main>
     );

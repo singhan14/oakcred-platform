@@ -5,6 +5,7 @@ const { authenticate } = require('../middleware/auth');
 
 // New Custom OTP Flow
 router.post('/otp/send', authLimiter, auth.sendOTP);
+router.post('/signup', authLimiter, auth.signup);
 router.post('/otp/verify', authLimiter, auth.verifyOTP);
 
 // Standard Password Login

@@ -14,6 +14,7 @@ import BorrowerDetail from './pages/BorrowerDetail';
 import Borrowers from './pages/Borrowers';
 import Monitoring from './pages/Monitoring';
 import Billing from './pages/Billing';
+import OcenAssessment from './pages/OcenAssessment';
 import Consent from './pages/Consent';
 import NotFound from './pages/NotFound';
 
@@ -76,6 +77,7 @@ export default function App() {
             <Route path="/borrowers/:id" element={<BorrowerDetail />} />
             <Route path="/assessment/new" element={<NewAssessment />} />
             <Route path="/monitoring" element={<Monitoring />} />
+            <Route path="/ocen" element={<OcenAssessment />} />
           </Route>
 
           {/* Redirects */}

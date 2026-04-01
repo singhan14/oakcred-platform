@@ -7,6 +7,7 @@ const navItems = [
   { to: '/dashboard', icon: 'dashboard', label: 'Dashboard' },
   { to: '/borrowers', icon: 'people', label: 'All Clients' },
   { to: '/assessment/new', icon: 'add_circle', label: 'New Assessment' },
+  { to: '/ocen', icon: 'hub', label: 'Cash-Flow Assessment' },
   { to: '/monitoring', icon: 'monitor_heart', label: 'Monitoring' },
 ];
 
