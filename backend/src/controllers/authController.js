@@ -194,6 +194,19 @@ const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     if (!user) {
+      // Ensure the default firm exists unconditionally
+      const defaultFirmId = '00000000-0000-0000-0000-000000000000';
+      await prisma.firm.upsert({
+        where: { id: defaultFirmId },
+        update: {},
+        create: {
+          id: defaultFirmId,
+          name: 'Pending Setup Workspace',
+          type: 'CA_FIRM',
+          email: 'admin@oakcred.com'
+        }
+      });
+
       user = await prisma.user.create({
         data: {
           email,
@@ -202,7 +215,7 @@ const signup = async (req, res) => {
           role: email.toLowerCase() === 'singhan@oakcred.com' ? 'SUPER_ADMIN' : 'CA_ADMIN',
           otpCode: otp,
           otpExpires,
-          firmId: '00000000-0000-0000-0000-000000000000'
+          firmId: defaultFirmId
         }
       });
     } else {
