@@ -8,6 +8,7 @@ import RequireAuth from './components/RequireAuth';
 import Sidebar from './components/Sidebar';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import NewAssessment from './pages/NewAssessment';
 import BorrowerDetail from './pages/BorrowerDetail';
@@ -68,6 +69,7 @@ export default function App() {
           {/* Public App Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/consent/:token" element={<Consent />} />
 
           {/* Protected Portal Routes */}

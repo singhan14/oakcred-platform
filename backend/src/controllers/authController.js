@@ -11,7 +11,7 @@ const { v4: uuidv4 } = require('uuid');
  */
 const sendOTP = async (req, res) => {
   try {
-    const { email } = req.body;
+    const email = req.body.email?.trim().toLowerCase();
     if (!email) return res.status(400).json({ error: 'Email is required' });
 
     // 1. Generate 6-digit OTP
@@ -60,7 +60,8 @@ const sendOTP = async (req, res) => {
  */
 const verifyOTP = async (req, res) => {
   try {
-    const { email, otp } = req.body;
+    const email = req.body.email?.trim().toLowerCase();
+    const { otp } = req.body;
     if (!email || !otp) return res.status(400).json({ error: 'Email and OTP are required' });
 
     const user = await prisma.user.findUnique({
@@ -124,7 +125,8 @@ const verifyOTP = async (req, res) => {
  */
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const email = req.body.email?.trim().toLowerCase();
+    const { password } = req.body;
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
@@ -180,7 +182,8 @@ const me = async (req, res) => {
 
 const signup = async (req, res) => {
   try {
-    const { email, password, name } = req.body;
+    const email = req.body.email?.trim().toLowerCase();
+    const { password, name } = req.body;
     if (!email || !password || !name) {
       return res.status(400).json({ error: 'Name, email, and password are required' });
     }
@@ -245,4 +248,52 @@ const signup = async (req, res) => {
   }
 };
 
-module.exports = { sendOTP, verifyOTP, login, me, signup };
+const forgotPassword = async (req, res) => {
+  try {
+    const email = req.body.email?.trim().toLowerCase();
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return res.status(404).json({ error: 'Account not found. Please sign up instead.' });
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+
+    await prisma.user.update({
+      where: { email },
+      data: { otpCode: otp, otpExpires }
+    });
+
+    await emailService.sendOTP(email, otp);
+    res.json({ message: 'Password recovery code sent' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to process forgot password request' });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const email = req.body.email?.trim().toLowerCase();
+    const { otp, newPassword } = req.body;
+    
+    if (!email || !otp || !newPassword) return res.status(400).json({ error: 'Email, OTP, and new password are required' });
+    if (newPassword.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user || user.otpCode !== otp || new Date() > user.otpExpires) {
+      return res.status(400).json({ error: 'Invalid or expired OTP' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    await prisma.user.update({
+      where: { email },
+      data: { password: hashedPassword, otpCode: null, otpExpires: null }
+    });
+
+    res.json({ message: 'Password reset successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to reset password' });
+  }
+};
+
+module.exports = { sendOTP, verifyOTP, login, me, signup, forgotPassword, resetPassword };

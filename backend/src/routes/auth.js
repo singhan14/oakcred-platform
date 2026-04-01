@@ -11,6 +11,10 @@ router.post('/otp/verify', authLimiter, auth.verifyOTP);
 // Standard Password Login
 router.post('/login', authLimiter, auth.login);
 
+// Password Recovery
+router.post('/forgot-password', authLimiter, auth.forgotPassword);
+router.post('/reset-password', authLimiter, auth.resetPassword);
+
 // Profile
 router.get('/me', authenticate, auth.me);
 

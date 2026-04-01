@@ -60,6 +60,31 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
+  // Password Recovery
+  forgotPassword: async (email) => {
+    set({ isLoading: true });
+    try {
+      const data = await api.post('/auth/forgot-password', { email });
+      set({ isLoading: false });
+      return data;
+    } catch (err) {
+      set({ isLoading: false });
+      throw err;
+    }
+  },
+
+  resetPassword: async (email, otp, newPassword) => {
+    set({ isLoading: true });
+    try {
+      const data = await api.post('/auth/reset-password', { email, otp, newPassword });
+      set({ isLoading: false });
+      return data;
+    } catch (err) {
+      set({ isLoading: false });
+      throw err;
+    }
+  },
+
   logout: async () => {
     localStorage.removeItem('accessToken');
     set({ user: null, isAuthenticated: false });
