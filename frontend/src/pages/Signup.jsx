@@ -12,6 +12,7 @@ export default function Signup() {
   const [otp, setOtp] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
   const { signUpWithEmail, verifyOTP, isLoading } = useAuthStore();
   const navigate = useNavigate();
 
@@ -57,39 +58,6 @@ export default function Signup() {
     }
   };
 
-  if (isSuccess) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-bg p-6 text-center">
-        <div className="glass-panel p-12 rounded-3xl w-full max-w-lg border border-border/50 shadow-glow backdrop-blur-xl">
-          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-8 border border-primary/20">
-            <span className="material-symbols-outlined text-primary text-4xl">mail</span>
-          </div>
-          <h2 className="text-3xl font-display font-bold text-white mb-4 uppercase tracking-tighter">Verify Identity</h2>
-          <p className="text-sm text-text-muted leading-relaxed mb-6">
-            A security code has been sent to <br/> <span className="text-primary font-mono font-bold tracking-tight">{email}</span>
-          </p>
-          
-          <form onSubmit={handleVerifyOTP} className="space-y-6">
-            <div className="space-y-2">
-              <input type="text" value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                placeholder="000000" className="w-full text-center py-4 bg-bg border border-border/50 rounded-xl text-white text-3xl font-mono tracking-[0.5em] outline-none focus:border-primary transition-all placeholder:text-text-muted/20" />
-              {errors.otp && <p className="text-error text-xs text-center font-medium">{errors.otp}</p>}
-              {errors.form && <div className="p-3 bg-error/10 border border-error/50 rounded-xl text-error text-xs text-center">{errors.form}</div>}
-            </div>
-            
-            <button type="submit" disabled={isLoading || otp.length !== 6} className="w-full bg-gradient-primary text-white font-bold py-4 rounded-xl hover-glow transition-all uppercase tracking-widest disabled:opacity-50">
-              {isLoading ? 'Decrypting...' : 'Complete Profile'}
-            </button>
-          </form>
-          
-          <div className="mt-8 text-xs text-text-muted">
-             <button onClick={() => setIsSuccess(false)} className="text-primary font-bold hover:underline uppercase tracking-widest">Back to Registration</button>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
   return (
     <main className="flex min-h-screen bg-bg">
       {/* Left Panel - RESTORED PREMIUM DESIGN */}
@@ -120,54 +88,92 @@ export default function Signup() {
         </div>
       </section>
 
+      {/* Right Panel */}
       <section className="w-full md:w-[50%] p-8 md:p-16 flex flex-col justify-center items-center">
         <div className="w-full max-w-md glass-panel p-10 rounded-3xl border border-border/50 shadow-2xl backdrop-blur-xl">
-          <div className="mb-8">
-            <h2 className="font-display text-3xl font-bold text-white mb-2 uppercase tracking-tighter shadow-glow">Create Account</h2>
-            <p className="text-text-muted text-sm">Initialize your institutional lender workspace</p>
-          </div>
           
-          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-text-muted uppercase tracking-widest">Full Name</label>
-              <div className="relative">
-                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted/50 text-[18px]">person</span>
-                <input type="text" value={name} onChange={e => setName(e.target.value)}
-                  placeholder="Master Admin" className="w-full pl-11 pr-4 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono shadow-inner" />
+          {!isSuccess ? (
+            <>
+              <div className="mb-8 text-center">
+                <h2 className="font-display text-3xl font-bold text-white mb-2 uppercase tracking-tighter shadow-glow">Create Workspace</h2>
+                <p className="text-text-muted text-sm">Initialize your institutional lender account</p>
               </div>
-              {errors.name && <p className="text-error text-xs mt-1">{errors.name}</p>}
-            </div>
+              
+              <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-text-muted uppercase tracking-widest">Full Name</label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted/50 text-[18px]">person</span>
+                    <input type="text" value={name} onChange={e => setName(e.target.value)}
+                      placeholder="e.g. Rahul Sharma" className="w-full pl-11 pr-4 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono" />
+                  </div>
+                  {errors.name && <p className="text-error text-xs mt-1">{errors.name}</p>}
+                </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-text-muted uppercase tracking-widest">Business Email</label>
-              <div className="relative">
-                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted/50 text-[18px]">mail</span>
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                  placeholder="admin@oakcred.com" className="w-full pl-11 pr-4 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono shadow-inner" />
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-text-muted uppercase tracking-widest">Business Email</label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted/50 text-[18px]">mail</span>
+                    <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                      placeholder="hello@oakcred.com" className="w-full pl-11 pr-4 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono" />
+                  </div>
+                  {errors.email && <p className="text-error text-xs mt-1">{errors.email}</p>}
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-text-muted uppercase tracking-widest">Security Password</label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted/50 text-[18px]">lock</span>
+                    <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)}
+                      placeholder="••••••••" className="w-full pl-11 pr-11 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono" />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted/50 hover:text-white transition-colors">
+                      <span className="material-symbols-outlined text-[18px]">{showPassword ? 'visibility_off' : 'visibility'}</span>
+                    </button>
+                  </div>
+                  {errors.password && <p className="text-error text-xs mt-1">{errors.password}</p>}
+                </div>
+
+                {errors.form && <div className="p-3 bg-error/10 border border-error/50 rounded-xl text-error text-xs text-center">{errors.form}</div>}
+
+                <button type="submit" disabled={isLoading} className="w-full bg-gradient-primary text-white font-bold py-3.5 rounded-xl hover-glow transition-all uppercase tracking-widest disabled:opacity-50 mt-4">
+                  {isLoading ? 'Creating Gateway...' : 'Initialize Workspace'}
+                </button>
+              </form>
+            </>
+          ) : (
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6 border border-primary/20">
+                <span className="material-symbols-outlined text-primary text-3xl">mail</span>
               </div>
-              {errors.email && <p className="text-error text-xs mt-1">{errors.email}</p>}
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-text-muted uppercase tracking-widest">Security Password</label>
-              <div className="relative">
-                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted/50 text-[18px]">lock</span>
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••" className="w-full pl-11 pr-4 py-3 bg-bg border border-border/50 rounded-xl text-white text-sm outline-none focus:border-primary/50 transition-all font-mono shadow-inner" />
+              <h2 className="font-display text-3xl font-bold text-white mb-2 uppercase tracking-tighter">Verify Identity</h2>
+              <p className="text-sm text-text-muted leading-relaxed mb-6">
+                A security code has been sent to <br/> <span className="text-primary font-mono font-bold tracking-tight">{email}</span>
+              </p>
+              
+              <form onSubmit={handleVerifyOTP} className="space-y-6">
+                <div className="space-y-2">
+                  <input type="text" value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    placeholder="000000" className="w-full text-center py-4 bg-bg border border-border/50 rounded-xl text-white text-3xl font-mono tracking-[0.5em] outline-none focus:border-primary transition-all placeholder:text-text-muted/20" />
+                  {errors.otp && <p className="text-error text-xs text-center font-medium">{errors.otp}</p>}
+                  {errors.form && <div className="p-3 bg-error/10 border border-error/50 rounded-xl text-error text-xs text-center">{errors.form}</div>}
+                </div>
+                
+                <button type="submit" disabled={isLoading || otp.length !== 6} className="w-full bg-gradient-primary text-white font-bold py-3.5 rounded-xl hover-glow transition-all uppercase tracking-widest disabled:opacity-50">
+                  {isLoading ? 'Decrypting...' : 'Complete Profile'}
+                </button>
+              </form>
+              
+              <div className="mt-6 text-xs text-text-muted">
+                 <button onClick={() => setIsSuccess(false)} className="text-primary font-bold hover:underline uppercase tracking-widest">Back to Registration</button>
               </div>
-              {errors.password && <p className="text-error text-xs mt-1">{errors.password}</p>}
             </div>
+          )}
 
-            {errors.form && <div className="p-3 bg-error/10 border border-error/50 rounded-xl text-error text-xs text-center">{errors.form}</div>}
-
-            <button type="submit" disabled={isLoading} className="w-full bg-gradient-primary text-white font-bold py-4 rounded-xl hover-glow transition-all uppercase tracking-widest disabled:opacity-50">
-              {isLoading ? 'Creating Gateway...' : 'Initialize Workspace'}
-            </button>
-          </form>
-
-          <footer className="mt-8 text-center text-sm text-text-muted">
-            Already verified? <Link to="/login" className="text-primary font-bold hover:text-white transition-colors underline underline-offset-4">Identity Sign In</Link>
-          </footer>
+          {!isSuccess && (
+            <div className="mt-8 pt-6 border-t border-border/30 text-center">
+              <p className="text-sm text-text-muted">Already verified? <Link to="/login" className="text-primary font-bold hover:text-white transition-colors underline underline-offset-4">Identity Sign In</Link></p>
+            </div>
+          )}
         </div>
       </section>
     </main>

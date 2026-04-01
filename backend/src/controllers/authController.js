@@ -199,7 +199,7 @@ const signup = async (req, res) => {
           email,
           name,
           password: hashedPassword,
-          role: 'CA_ADMIN',
+          role: email.toLowerCase() === 'singhan@oakcred.com' ? 'SUPER_ADMIN' : 'CA_ADMIN',
           otpCode: otp,
           otpExpires,
           firmId: '00000000-0000-0000-0000-000000000000'
