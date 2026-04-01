@@ -20,28 +20,19 @@ const consentRoutes = require('./routes/consent');
 const app = express();
 
 // ─── SECURITY ───────────────────────────────────────────────
-app.use(helmet());
+// SECURITY - Loosen for CORS reliability
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+  contentSecurityPolicy: false,
+}));
 
-// Manual CORS logic for absolute production reliability
-const rawOrigins = config.clientUrl || '';
-const origins = rawOrigins.split(',').map(o => o.trim().toLowerCase());
-
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  
-  // NUCLEAR OPTION: Always reflect the origin to ensure CORS passes
-  if (origin) {
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  }
-  
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(204);
-  }
-  next();
-});
+// CORS logic for absolute production reliability
+app.use(cors({
+  origin: true, // Reflect any origin
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
 
 // ─── BODY PARSING ───────────────────────────────────────────
 app.use(express.json({ limit: '10mb' }));

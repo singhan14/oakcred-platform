@@ -35,7 +35,7 @@ export default function Signup() {
       setIsSuccess(true);
       toast.success('Registration code sent to email!');
     } catch (err) {
-      const msg = err?.message || 'Failed to sign up.';
+      const msg = err?.error || err?.message || 'Failed to sign up.';
       setErrors({ form: msg });
       toast.error(msg);
     }
@@ -52,7 +52,7 @@ export default function Signup() {
       toast.success('Workspace created and identity verified!');
       navigate('/dashboard');
     } catch (err) {
-      const msg = err?.message || 'Invalid or expired code.';
+      const msg = err?.error || err?.message || 'Invalid or expired code.';
       setErrors({ form: msg });
       toast.error(msg);
     }
