@@ -125,6 +125,8 @@ model CreditAssessment {
   reportGeneratedAt      DateTime?
   dataSourcesUsed        Json?
   rawInputData           Json?
+  aiSummary              String?
+  aiInsights             Json?
   createdAt              DateTime                  @default(now())
   borrower               Borrower                  @relation(fields: [borrowerId], references: [id])
   createdBy              User                      @relation("AssessmentCreator", fields: [createdById], references: [id])

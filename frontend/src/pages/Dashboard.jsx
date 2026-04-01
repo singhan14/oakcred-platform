@@ -209,28 +209,40 @@ export default function Dashboard() {
               Action Items
             </h3>
             <div className="space-y-3">
-              {borrowers.flatMap(b => (b.assessments?.[0]?.flags || []).map(f => ({ ...f, borrowerName: b.name })))
-                .filter(f => f.severity === 'HIGH')
-                .slice(0, 4)
-                .map((a, i) => (
-                <div key={i} className="flex gap-4 p-5 rounded-3xl bg-white/[0.02] hover:bg-white/[0.04] backdrop-blur-md transition-all cursor-pointer group shadow-sm border border-transparent hover:border-error/20 hover:shadow-[0_4px_20px_rgba(239,68,68,0.1)]">
-                  <div className="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center shrink-0">
-                    <span className={`material-symbols-outlined text-[18px] text-error`}>warning</span>
+              {(() => {
+                const aiAlerts = borrowers.flatMap(b => (b.assessments?.[0]?.aiInsights || [])
+                  .filter(i => i.type === 'RISK' || i.type === 'HIGH')
+                  .map(i => ({ message: `${i.title}: ${i.description}`, borrowerName: b.name }))
+                );
+                const legacyAlerts = borrowers.flatMap(b => (b.assessments?.[0]?.flags || [])
+                  .filter(f => f.severity === 'HIGH')
+                  .map(f => ({ message: f.message, borrowerName: b.name }))
+                );
+                const allAlerts = [...aiAlerts, ...legacyAlerts].slice(0, 4);
+
+                if (allAlerts.length === 0) {
+                  return (
+                    <div className="p-8 text-center bg-white/[0.01] rounded-3xl backdrop-blur-sm">
+                      <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-4">
+                        <span className="material-symbols-outlined text-success opacity-80 text-3xl">check_circle</span>
+                      </div>
+                      <p className="text-sm text-text-muted font-medium">All clear. No high-severity items found.</p>
+                    </div>
+                  );
+                }
+
+                return allAlerts.map((a, i) => (
+                  <div key={i} className="flex gap-4 p-5 rounded-3xl bg-white/[0.02] hover:bg-white/[0.04] backdrop-blur-md transition-all cursor-pointer group shadow-sm border border-transparent hover:border-error/20 hover:shadow-[0_4px_20px_rgba(239,68,68,0.1)]">
+                    <div className="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center shrink-0">
+                      <span className={`material-symbols-outlined text-[18px] text-error`}>warning</span>
+                    </div>
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                      <h4 className="text-sm font-medium text-white truncate">{a.message}</h4>
+                      <p className="text-xs text-text-muted mt-1 truncate font-medium">{a.borrowerName}</p>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0 flex flex-col justify-center">
-                    <h4 className="text-sm font-medium text-white truncate">{a.message}</h4>
-                    <p className="text-xs text-text-muted mt-1 truncate font-medium">{a.borrowerName}</p>
-                  </div>
-                </div>
-              ))}
-              {borrowers.flatMap(b => b.assessments?.[0]?.flags || []).filter(f => f.severity === 'HIGH').length === 0 && (
-                <div className="p-8 text-center bg-white/[0.01] rounded-3xl backdrop-blur-sm">
-                  <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-4">
-                    <span className="material-symbols-outlined text-success opacity-80 text-3xl">check_circle</span>
-                  </div>
-                  <p className="text-sm text-text-muted font-medium">All clear. No high-severity item found.</p>
-                </div>
-              )}
+                ));
+              })()}
             </div>
             <button className="w-full mt-6 text-xs font-bold font-label tracking-wider uppercase text-text-muted hover:text-primary transition-colors">
               View All Alerts

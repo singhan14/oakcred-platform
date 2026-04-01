@@ -30,8 +30,13 @@ export default function Monitoring() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       <div>
-        <h1 className="font-display text-3xl font-bold text-white tracking-tight">Loan <GradientText>Monitoring</GradientText></h1>
-        <p className="text-sm text-text-muted mt-1">Track post-disbursal health and early warning signals</p>
+        <div className="flex items-center gap-3">
+          <h1 className="font-display text-3xl font-bold text-white tracking-tight">Loan <GradientText>Monitoring</GradientText></h1>
+          <span className="px-2.5 py-1 bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold tracking-widest uppercase rounded flex items-center gap-1 shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+            <span className="material-symbols-outlined text-[14px]">auto_awesome</span> AI-Powered
+          </span>
+        </div>
+        <p className="text-sm text-text-muted mt-2">Track post-disbursal health and early warning signals using AI telemetry</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

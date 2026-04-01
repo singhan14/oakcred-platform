@@ -91,6 +91,7 @@ jobs:
                 - NODE_ENV=production
                 - EMAIL_USER=singhan@oakcred.com
                 - EMAIL_PASS=vqnw dllb lssc rfzg
+                - GEMINI_API_KEY=AIzaSyCEMOuBvqRlqWb2gyE7cQi4jcUobt3a5F4
               depends_on:
                 - db
                 - redis

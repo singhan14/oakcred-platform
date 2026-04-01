@@ -1,6 +1,7 @@
 const prisma = require('../config/database');
 const { runCreditAssessment } = require('../services/scoringEngine');
 const { generateReport } = require('../services/reportGenerator');
+const llmService = require('../services/llmService');
 const { encrypt } = require('../utils/encryption');
 
 // POST /api/assessments/:borrowerId/run
@@ -51,13 +52,17 @@ exports.runAssessment = async (req, res, next) => {
     });
 
     // Encrypt raw input data
-    const rawInputData = encrypt({
+    const rawInputRaw = {
       gstRecordCount: gstRecords.length,
       itrRecordCount: itrRecords.length,
       hasBankData: !!bankData,
       requestedLoanAmount,
       requestedTenureMonths,
-    });
+    };
+    const rawInputData = encrypt(rawInputRaw);
+
+    // Run Generative AI (LLM) processing
+    const { aiSummary, aiInsights } = await llmService.generateCreditMemo(rawInputRaw, result);
 
     // Save assessment
     const assessment = await prisma.creditAssessment.create({
@@ -85,6 +90,8 @@ exports.runAssessment = async (req, res, next) => {
         lenderMatches: result.lenderMatches,
         dataSourcesUsed: result.dataSourcesUsed,
         rawInputData,
+        aiSummary,
+        aiInsights,
       },
     });
 

@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import GlassCard from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
 import GradientText from '../components/ui/GradientText';
+import ReactMarkdown from 'react-markdown';
 
 const scoreColor = (s) => s >= 75 ? 'text-success' : s >= 50 ? 'text-warning' : 'text-error';
 const verdictClass = (v) => v === 'LOAN_READY' ? 'text-success bg-success/10 border-success/20' : v === 'CONDITIONALLY_READY' ? 'text-warning bg-warning/10 border-warning/20' : v === 'UNDER_REVIEW' ? 'text-warning bg-warning/10 border-warning/20' : 'text-error bg-error/10 border-error/20';
@@ -224,6 +225,20 @@ export default function BorrowerDetail() {
         </div>
       </GlassCard>
 
+      {/* AI Credit Memorandum */ }
+      {a?.aiSummary && (
+        <GlassCard className="relative overflow-hidden group">
+          <div className="absolute inset-x-0 -top-24 h-48 bg-primary/5 blur-[80px] pointer-events-none group-hover:bg-primary/10 transition-colors" />
+          <h2 className="font-display text-xl font-bold text-white mb-6 flex items-center gap-2 relative z-10">
+            <span className="material-symbols-outlined text-primary">auto_awesome</span>
+            AI Credit Memorandum
+          </h2>
+          <div className="prose prose-sm prose-invert max-w-none relative z-10 text-white leading-relaxed">
+            <ReactMarkdown>{a.aiSummary}</ReactMarkdown>
+          </div>
+        </GlassCard>
+      )}
+
       <div className="grid lg:grid-cols-2 gap-8">
         
         {/* Score Breakdown */}
@@ -254,34 +269,59 @@ export default function BorrowerDetail() {
 
         {/* Risk Assessment Flags */}
         <GlassCard className="flex flex-col">
-          <h2 className="font-display text-xl font-bold text-white mb-6">Analyst Risk Report</h2>
+          <h2 className="font-display text-xl font-bold text-white mb-6">AI Insights</h2>
           <div className="space-y-4 flex-1">
-            {hFlags.map((f, i) => (
-              <div key={`h${i}`} className="p-4 rounded-xl bg-error/5 border border-error/20 relative group hover:bg-error/10 transition-colors">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-error rounded-l-xl opacity-50 group-hover:opacity-100 transition-opacity" />
-                <div className="flex items-start justify-between mb-2">
-                  <span className="material-symbols-outlined text-error">warning</span>
-                  <span className="text-[10px] font-bold text-error uppercase tracking-widest bg-error/10 px-2 py-0.5 rounded">High Risk</span>
-                </div>
-                <p className="font-semibold text-sm mb-1 text-white">{f.message}</p>
-                <p className="text-xs text-text-muted mb-3">{f.suggestion || ''}</p>
-                <div className="text-error mt-2 text-[10px] font-bold tracking-widest uppercase flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">policy</span> REVIEW REQUIRED</div>
-              </div>
-            ))}
+            {a?.aiInsights && a.aiInsights.length > 0 ? (
+              a.aiInsights.map((insight, i) => {
+                const isRisk = insight.type === 'RISK' || insight.type === 'HIGH';
+                const isStrength = insight.type === 'STRENGTH' || insight.type === 'POSITIVE';
+                
+                const boxColor = isRisk ? 'bg-error/5 border-error/20' : isStrength ? 'bg-success/5 border-success/20' : 'bg-info/5 border-info/20';
+                const textColor = isRisk ? 'text-error' : isStrength ? 'text-success' : 'text-info';
+                const icon = isRisk ? 'warning' : isStrength ? 'check_circle' : 'info';
+                
+                return (
+                  <div key={i} className={`p-4 rounded-xl ${boxColor} border relative group hover:bg-white/5 transition-colors`}>
+                    <div className="flex items-start justify-between mb-2">
+                      <span className={`material-symbols-outlined ${textColor}`}>{icon}</span>
+                      <span className={`text-[10px] font-bold ${textColor} uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded`}>{insight.type}</span>
+                    </div>
+                    <p className="font-semibold text-sm mb-1 text-white">{insight.title}</p>
+                    <p className="text-xs text-text-muted mb-3">{insight.description}</p>
+                  </div>
+                );
+              })
+            ) : (
+              // Fallback to old static flags if AI Insights haven't been generated
+              <>
+                {hFlags.map((f, i) => (
+                  <div key={`h${i}`} className="p-4 rounded-xl bg-error/5 border border-error/20 relative group hover:bg-error/10 transition-colors">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-error rounded-l-xl opacity-50 group-hover:opacity-100 transition-opacity" />
+                    <div className="flex items-start justify-between mb-2">
+                      <span className="material-symbols-outlined text-error">warning</span>
+                      <span className="text-[10px] font-bold text-error uppercase tracking-widest bg-error/10 px-2 py-0.5 rounded">High Risk</span>
+                    </div>
+                    <p className="font-semibold text-sm mb-1 text-white">{f.message}</p>
+                    <p className="text-xs text-text-muted mb-3">{f.suggestion || ''}</p>
+                    <div className="text-error mt-2 text-[10px] font-bold tracking-widest uppercase flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">policy</span> REVIEW REQUIRED</div>
+                  </div>
+                ))}
 
-            {mFlags.map((f, i) => (
-              <div key={`m${i}`} className="p-4 rounded-xl bg-warning/5 border border-warning/20 relative group hover:bg-warning/10 transition-colors">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-warning rounded-l-xl opacity-50 group-hover:opacity-100 transition-opacity" />
-                <div className="flex items-start justify-between mb-2">
-                  <span className="material-symbols-outlined text-warning">info</span>
-                  <span className="text-[10px] font-bold text-warning uppercase tracking-widest bg-warning/10 px-2 py-0.5 rounded">Monitor</span>
-                </div>
-                <p className="font-semibold text-sm mb-1 text-white">{f.message}</p>
-                <p className="text-xs text-text-muted mb-3">{f.suggestion || ''}</p>
-              </div>
-            ))}
+                {mFlags.map((f, i) => (
+                  <div key={`m${i}`} className="p-4 rounded-xl bg-warning/5 border border-warning/20 relative group hover:bg-warning/10 transition-colors">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-warning rounded-l-xl opacity-50 group-hover:opacity-100 transition-opacity" />
+                    <div className="flex items-start justify-between mb-2">
+                      <span className="material-symbols-outlined text-warning">info</span>
+                      <span className="text-[10px] font-bold text-warning uppercase tracking-widest bg-warning/10 px-2 py-0.5 rounded">Monitor</span>
+                    </div>
+                    <p className="font-semibold text-sm mb-1 text-white">{f.message}</p>
+                    <p className="text-xs text-text-muted mb-3">{f.suggestion || ''}</p>
+                  </div>
+                ))}
+              </>
+            )}
 
-            {flags.length === 0 && (
+            {(!a?.aiInsights || a?.aiInsights.length === 0) && flags.length === 0 && (
               <div className="p-6 text-center rounded-xl bg-surface2/30 border border-dashed border-border/50 h-full flex flex-col items-center justify-center">
                 <span className="material-symbols-outlined text-success opacity-50 text-4xl mb-3">verified_user</span>
                 <p className="font-medium text-white text-sm mb-1">Portfolio clear</p>

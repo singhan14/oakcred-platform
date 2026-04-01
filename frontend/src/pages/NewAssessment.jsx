@@ -328,15 +328,15 @@ export default function NewAssessment() {
 
             {/* Actions */}
             <div className="flex justify-between pt-6 border-t border-border/50 mt-8">
-              <Button onClick={() => setStep(1)} variant="secondary" className="flex items-center gap-2">
+              <Button onClick={() => setStep(1)} variant="secondary" className="flex items-center gap-2" disabled={loading}>
                 <span className="material-symbols-outlined text-[18px]">arrow_back</span> Back
               </Button>
               <div className="flex gap-4">
-                <Button onClick={() => { toast.success('Consent link sent via SMS/Email to ' + (form.phone || form.email)); setStep(1); }} variant="secondary" className="flex items-center gap-2">
+                <Button onClick={() => { toast.success('Consent link sent via SMS/Email to ' + (form.phone || form.email)); setStep(1); }} variant="secondary" className="flex items-center gap-2" disabled={loading}>
                   <span className="material-symbols-outlined text-[18px]">send</span> Dispatch Link
                 </Button>
-                <Button onClick={handleRunAssessment} disabled={loading} variant="primary" className="flex items-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-                  {loading ? <><div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> Executing...</> : <><span className="material-symbols-outlined text-[18px]">bolt</span> Execute ML Engine</>}
+                <Button onClick={handleRunAssessment} disabled={loading} variant="primary" className="flex items-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.3)] min-w-[200px] justify-center">
+                  {loading ? <><span className="material-symbols-outlined text-[18px] animate-pulse">auto_awesome</span> Generating AI Memo...</> : <><span className="material-symbols-outlined text-[18px]">bolt</span> Execute ML Engine</>}
                 </Button>
               </div>
             </div>
