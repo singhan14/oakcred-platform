@@ -197,7 +197,7 @@ const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     if (!user) {
-      // Ensure the default firm exists unconditionally
+      // Ensure the default placeholder firm exists
       const defaultFirmId = '00000000-0000-0000-0000-000000000000';
       await prisma.firm.upsert({
         where: { id: defaultFirmId },
