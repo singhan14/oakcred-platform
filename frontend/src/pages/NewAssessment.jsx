@@ -35,7 +35,7 @@ export default function NewAssessment() {
     name: '', type: 'MSME', gstin: '', pan: '', udyamNumber: '',
     businessName: '', industry: 'IT', city: '', state: '', phone: '', email: '',
     requestedLoanAmount: '', requestedTenureMonths: '36', loanPurpose: 'Working Capital',
-    cibilCheck: true, uploads: { itr: null, bank: null }
+    cibilCheck: true, uploads: { itr: null, bank: null, gst: null }
   });
 
   const set = (key, val) => { setForm(f => ({ ...f, [key]: val })); setErrors(e => ({ ...e, [key]: undefined })); };
@@ -76,8 +76,14 @@ export default function NewAssessment() {
         phone: form.phone || null, email: form.email || null,
       });
 
-      if (form.gstin) {
+      if (form.gstin && !form.uploads.gst) {
         try { await api.post('/data/gst/sync', { borrowerId: borrower.id, gstin: form.gstin.toUpperCase() }); } catch {}
+      }
+
+      if (form.uploads.gst instanceof File) {
+        const formData = new FormData();
+        formData.append('file', form.uploads.gst);
+        try { await api.upload(`/data/${borrower.id}/upload-gst`, formData); } catch (e) { toast.error('GST Parse error: ' + e.message); }
       }
 
       if (form.uploads.itr instanceof File) {
@@ -266,9 +272,34 @@ export default function NewAssessment() {
             </div>
 
             {/* Manual Uploads */}
-            <div>
-              <p className="text-sm font-bold text-white mb-4">Fallback: Direct Document Ingestion <span className="text-text-muted font-normal text-[10px] uppercase tracking-widest ml-2 border border-border/50 px-2 py-0.5 rounded-full bg-surface2/50">(Bypasses Auth Link)</span></p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-center">
+            <div className="space-y-6">
+              <p className="text-sm font-bold text-white mb-2">Smart Ingestion <span className="text-text-muted font-normal text-[10px] uppercase tracking-widest ml-2 border border-border/50 px-2 py-0.5 rounded-full bg-surface2/50">AI Document Parser</span></p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+                {/* GST Upload */}
+                <div onClick={() => document.getElementById('gst-upload').click()} className="border border-dashed border-border/50 bg-surface2/30 p-6 rounded-xl hover:bg-surface2/80 hover:border-primary/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.1)] cursor-pointer transition-all group relative overflow-hidden">
+                  <input type="file" id="gst-upload" accept=".pdf" className="hidden" onChange={(e) => {
+                    if (e.target.files[0]) {
+                      set('uploads', { ...form.uploads, gst: e.target.files[0] });
+                      toast.success(`Attached ${e.target.files[0].name}`);
+                    }
+                  }} />
+                  {form.uploads.gst ? (
+                     <div className="flex flex-col items-center">
+                       <span className="material-symbols-outlined text-success mb-3 text-[32px] drop-shadow-[0_0_8px_rgba(34,197,94,0.5)]">check_circle</span>
+                       <p className="text-sm font-bold text-white truncate w-full px-2">{form.uploads.gst.name}</p>
+                       <p className="text-[10px] font-bold tracking-widest uppercase text-text-muted mt-2 group-hover:text-primary transition-colors">Click to replace</p>
+                     </div>
+                  ) : (
+                     <div className="flex flex-col items-center">
+                       <div className="w-12 h-12 rounded-full bg-surface2 border border-border/50 flex items-center justify-center mb-4 group-hover:border-primary/50 group-hover:bg-primary/5 transition-all">
+                         <span className="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors">receipt_long</span>
+                       </div>
+                       <p className="text-sm font-bold text-white group-hover:text-primary transition-colors">GSTR-3B (PDF)</p>
+                       <p className="text-[10px] font-bold tracking-widest uppercase text-text-muted mt-2">Free AI Sync</p>
+                     </div>
+                  )}
+                </div>
+
                 <div onClick={() => document.getElementById('itr-upload').click()} className="border border-dashed border-border/50 bg-surface2/30 p-6 rounded-xl hover:bg-surface2/80 hover:border-primary/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.1)] cursor-pointer transition-all group relative overflow-hidden">
                   <input type="file" id="itr-upload" accept=".pdf" className="hidden" onChange={(e) => {
                     if (e.target.files[0]) {
@@ -309,7 +340,7 @@ export default function NewAssessment() {
                   ) : (
                      <div className="flex flex-col items-center">
                        <div className="w-12 h-12 rounded-full bg-surface2 border border-border/50 flex items-center justify-center mb-4 group-hover:border-primary/50 group-hover:bg-primary/5 transition-all">
-                         <span className="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors">receipt_long</span>
+                         <span className="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors">account_balance</span>
                        </div>
                        <p className="text-sm font-bold text-white group-hover:text-primary transition-colors">Bank Statement</p>
                        <p className="text-[10px] font-bold tracking-widest uppercase text-text-muted mt-2">CSV / PDF / XLS</p>
@@ -321,8 +352,8 @@ export default function NewAssessment() {
 
             <div className="pt-2">
               <button onClick={() => toast.success('Expanded manual data entry form')} className="flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-primary hover:text-white transition-colors">
-                <span className="material-symbols-outlined text-[16px]">keyboard_arrow_down</span>
-                Manual Data Entry (Override)
+                <span className="material-symbols-outlined text-[16px]">add_circle</span>
+                Manual Data Override (Advanced)
               </button>
             </div>
 

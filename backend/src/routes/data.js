@@ -19,6 +19,7 @@ const upload = multer({
 router.use(authenticate, firmIsolation);
 
 router.post('/:borrowerId/sync-gst', data.syncGST);
+router.post('/:borrowerId/upload-gst', upload.single('file'), data.uploadGST);
 router.post('/:borrowerId/upload-itr', upload.single('file'), data.uploadITR);
 router.post('/:borrowerId/upload-bank-statement', upload.single('file'), data.uploadBankStatement);
 router.post('/:borrowerId/manual-entry', data.manualEntry);

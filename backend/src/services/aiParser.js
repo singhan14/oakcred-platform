@@ -123,7 +123,74 @@ async function extractBankMetrics(text) {
   }
 }
 
+/**
+ * Extracts exact GST metrics (Turnover, ITC) from a GSTR-3B PDF return using Gemini 1.5.
+ *
+ * @param {string} text Raw text extracted from the PDF
+ * @param {string} defaultGstin Default GSTIN if not found
+ * @returns {object} Struct matching GST schema
+ */
+async function extractGST(text, defaultGstin = 'UNKNOWN') {
+  if (!config.gemini.apiKey || config.gemini.apiKey === 'mock') {
+    throw new Error('Gemini API key is required to parse documents natively.');
+  }
+
+  const prompt = `
+    You are an elite Indian Financial Data Extractor mimicking a core Account Aggregator / GST Suvidha Provider.
+    Below is the raw text from an Indian GSTR-3B return PDF.
+    Extract the following standard filing metrics and output strict JSON only (no markdown).
+
+    Rules:
+    - Turnover: Usually labelled as "Outward Taxable Supplies" (Total Taxable Value). Look for row 3.1.
+    - ITC Eligible: "All other ITC" or Total ITC Available. Row 4.A.
+    - ITC Claimed: ITC utilized or claimed.
+    - Tax Liability: Tax paid in cash / credit, total tax payable.
+    - Period: E.g., "April 2023", convert to "2023-04" format. Return current month "yyyy-mm" if totally missing.
+    - Status: Default to "FILED".
+
+    Required JSON Schema:
+    {
+      "gstin": "22AAAAA0000A1Z5", // string
+      "period": "2023-04", // string (YYYY-MM format)
+      "turnover": 450000,  // number (Outward Taxable Value)
+      "itcEligible": 81000, // number
+      "itcClaimed": 80000, // number 
+      "taxLiability": 81000 // number
+    }
+
+    [Raw Text Begins]
+    ${text.slice(0, 30000)}
+    [Raw Text Ends]
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+      },
+    });
+
+    const parsed = JSON.parse(response.text);
+
+    return {
+      gstin: parsed.gstin && parsed.gstin.length === 15 ? parsed.gstin : defaultGstin,
+      period: parsed.period || `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`,
+      turnover: Number(parsed.turnover) || 0,
+      itcEligible: Number(parsed.itcEligible) || 0,
+      itcClaimed: Number(parsed.itcClaimed) || 0,
+      taxLiability: Number(parsed.taxLiability) || 0,
+      filingStatus: 'FILED'
+    };
+  } catch (error) {
+    console.error('[AI PARSER] Gemini GST extraction failed:', error.message);
+    throw new Error('Failed to extract GST data via True AI.');
+  }
+}
+
 module.exports = {
   extractITR,
   extractBankMetrics,
+  extractGST,
 };

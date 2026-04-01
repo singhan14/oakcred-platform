@@ -24,11 +24,19 @@ async function seed() {
   console.log('✅ Created firm:', firm.name);
 
   // 2. Create Admin User
-  const hashedPassword = await bcrypt.hash('OakCred@2026', 12);
-  const admin = await prisma.user.create({
-    data: {
+  // 2. Create/Sync Admin User (Use upsert so we don't overwrite manual passwords)
+  const defaultHashedPassword = await bcrypt.hash('OakCred@2026', 12);
+  const admin = await prisma.user.upsert({
+    where: { email: 'singhan@oakcred.com' },
+    update: {
+      role: 'CA_ADMIN',
+      firmId: firm.id,
+      isVerified: true,
+      isActive: true,
+    },
+    create: {
       email: 'singhan@oakcred.com',
-      password: hashedPassword,
+      password: defaultHashedPassword,
       name: 'Singhan Yadav',
       role: 'CA_ADMIN',
       firmId: firm.id,

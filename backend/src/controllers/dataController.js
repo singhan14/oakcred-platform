@@ -72,6 +72,86 @@ exports.syncGST = async (req, res, next) => {
   }
 };
 
+// POST /api/data/:borrowerId/upload-gst
+exports.uploadGST = async (req, res, next) => {
+  try {
+    const borrower = await prisma.borrower.findFirst({
+      where: { id: req.params.borrowerId, firmId: req.firmId, isDeleted: false },
+    });
+
+    if (!borrower) {
+      return res.status(404).json({ error: 'Borrower not found' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'PDF file required' });
+    }
+
+    // Archive raw document for Phase 2 ML Training
+    try {
+      await uploadBlob('gst', `borrower_${borrower.id}_${Date.now()}_${req.file.originalname || 'doc.pdf'}`, req.file.buffer, req.file.mimetype);
+    } catch (e) {
+      console.warn('[ML Archival] Failed to save raw GST document:', e.message);
+    }
+
+    // Parse PDF using AI
+    let extractedData;
+    try {
+      const pdfParse = require('pdf-parse');
+      const data = await pdfParse(req.file.buffer);
+      const { extractGST } = require('../services/aiParser');
+      extractedData = await extractGST(data.text, borrower.gstin);
+    } catch (parseErr) {
+      console.warn('[GST] Parse failed:', parseErr.message);
+      return res.status(500).json({ error: 'Failed to parse GST document intelligently.' });
+    }
+
+    const { period, turnover, itcClaimed, itcEligible, taxLiability, filingStatus } = extractedData;
+    // Derive due date (typically 20th of next month)
+    const [yearStr, monthStr] = period.split('-');
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10);
+    const dueDate = new Date(year, month, 20);
+
+    const gstRecord = await prisma.gSTData.upsert({
+      where: {
+        borrowerId_period_returnType: {
+          borrowerId: borrower.id,
+          period,
+          returnType: 'GSTR3B',
+        },
+      },
+      update: {
+        turnover,
+        itcClaimed,
+        itcEligible,
+        taxLiability,
+        filingStatus,
+        fetchedAt: new Date(),
+        source: 'PDF_UPLOAD',
+      },
+      create: {
+        borrowerId: borrower.id,
+        gstin: extractedData.gstin,
+        period,
+        returnType: 'GSTR3B',
+        filingStatus,
+        filedOn: new Date(),
+        dueDate,
+        turnover,
+        itcClaimed,
+        itcEligible,
+        taxLiability,
+        source: 'PDF_UPLOAD',
+      },
+    });
+
+    res.json({ message: 'GST return generated from PDF', data: gstRecord });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // POST /api/data/:borrowerId/upload-itr
 exports.uploadITR = async (req, res, next) => {
   try {

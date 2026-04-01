@@ -47,6 +47,10 @@ const config = {
     key: process.env.ENCRYPTION_KEY || 'creditiq-32char-enc-key-dev2026!',
   },
 
+  gemini: {
+    apiKey: process.env.GEMINI_API_KEY || 'mock',
+  },
+
   isMock(service) {
     const val = this[service]?.apiKey || this[service]?.sid;
     return val === 'mock';
