@@ -74,7 +74,7 @@ export default function Monitoring() {
           <h2 className="font-display text-xl font-bold text-white">Monitored Portfolio</h2>
         </div>
         
-        {(!data?.portfolio || data.portfolio.length === 0) ? (
+        {(!data?.monitors || data.monitors.length === 0) ? (
           <div className="p-16 text-center">
             <span className="material-symbols-outlined text-text-muted opacity-30 text-5xl mb-4 block">monitoring</span>
             <p className="text-white font-medium mb-1">No active loans being monitored</p>
@@ -93,26 +93,26 @@ export default function Monitoring() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
-                {data.portfolio.map((loan, i) => (
+                {data.monitors.map((loan, i) => (
                   <tr key={i} className="hover:bg-surface2/50 transition-colors group">
                     <td className="px-6 py-4">
-                      <Link to={`/borrowers/${loan.borrowerId}`} className="font-semibold text-white group-hover:text-primary transition-colors">{loan.name}</Link>
+                      <Link to={`/borrowers/${loan.borrowerId}`} className="font-semibold text-white group-hover:text-primary transition-colors">{loan.borrower?.name}</Link>
                     </td>
-                    <td className="px-6 py-4 font-mono text-sm text-white">₹{loan.amount.toLocaleString()}</td>
+                    <td className="px-6 py-4 font-mono text-sm text-white">₹{loan.loanAmount?.toLocaleString()}</td>
                     <td className="px-6 py-4">
                       <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-widest uppercase border ${
-                        loan.health === 'GOOD' ? 'bg-success/10 text-success border-success/20' : 
-                        loan.health === 'WARNING' ? 'bg-warning/10 text-warning border-warning/20' : 'bg-error/10 text-error border-error/20'
-                      }`}>{loan.health}</span>
+                        loan.outcomeLabel === 'GOOD' ? 'bg-success/10 text-success border-success/20' : 
+                        loan.outcomeLabel === 'DELAYED' ? 'bg-warning/10 text-warning border-warning/20' : loan.outcomeLabel === 'DEFAULTED' ? 'bg-error/10 text-error border-error/20' : 'bg-primary/10 text-primary border-primary/20'
+                      }`}>{loan.outcomeLabel || loan.riskFlag}</span>
                     </td>
                     <td className="px-6 py-4 text-xs font-medium text-text-muted">
-                      {new Date(loan.lastSync).toLocaleDateString()}
+                      {new Date(loan.lastCheckedAt || loan.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4">
                       {loan.alerts > 0 ? (
                         <span className="flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase text-error">
                           <span className="material-symbols-outlined text-[14px]">notifications_active</span>
-                          {loan.alerts} alerts
+                          {loan.riskFlag !== 'NONE' ? 1 : 0} alerts
                         </span>
                       ) : <span className="text-xs text-text-muted">-</span>}
                     </td>
