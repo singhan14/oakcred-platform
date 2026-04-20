@@ -225,8 +225,8 @@ export default function NewAssessment() {
               <p className="text-sm font-bold text-white mb-2">Smart Ingestion <span className="text-text-muted font-normal text-[10px] uppercase tracking-widest ml-2 border border-border/50 px-2 py-0.5 rounded-full bg-surface2/50">AI Document Parser</span></p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
                 {/* GST Upload */}
-                <div onClick={() => document.getElementById('gst-upload').click()} className="border border-dashed border-border/50 bg-surface2/30 p-6 rounded-xl hover:bg-surface2/80 hover:border-primary/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.1)] cursor-pointer transition-all group relative overflow-hidden">
-                  <input type="file" id="gst-upload" accept=".pdf" className="hidden" onChange={(e) => {
+                <label htmlFor="gst-upload" className="block border border-dashed border-border/50 bg-surface2/30 p-6 rounded-xl hover:bg-surface2/80 hover:border-primary/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.1)] cursor-pointer transition-all group relative overflow-hidden">
+                  <input type="file" id="gst-upload" accept=".pdf" className="sr-only" onChange={(e) => {
                     if (e.target.files[0]) {
                       set('uploads', { ...form.uploads, gst: e.target.files[0] });
                       toast.success(`Attached ${e.target.files[0].name}`);
@@ -247,10 +247,10 @@ export default function NewAssessment() {
                        <p className="text-[10px] font-bold tracking-widest uppercase text-text-muted mt-2">Free AI Sync</p>
                      </div>
                   )}
-                </div>
+                </label>
 
-                <div onClick={() => document.getElementById('itr-upload').click()} className="border border-dashed border-border/50 bg-surface2/30 p-6 rounded-xl hover:bg-surface2/80 hover:border-primary/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.1)] cursor-pointer transition-all group relative overflow-hidden">
-                  <input type="file" id="itr-upload" accept=".pdf" className="hidden" onChange={(e) => {
+                <label htmlFor="itr-upload" className="block border border-dashed border-border/50 bg-surface2/30 p-6 rounded-xl hover:bg-surface2/80 hover:border-primary/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.1)] cursor-pointer transition-all group relative overflow-hidden">
+                  <input type="file" id="itr-upload" accept=".pdf" className="sr-only" onChange={(e) => {
                     if (e.target.files[0]) {
                       set('uploads', { ...form.uploads, itr: e.target.files[0] });
                       toast.success(`Attached ${e.target.files[0].name}`);
@@ -271,10 +271,10 @@ export default function NewAssessment() {
                        <p className="text-[10px] font-bold tracking-widest uppercase text-text-muted mt-2">Max 10MB</p>
                      </div>
                   )}
-                </div>
+                </label>
                 
-                <div onClick={() => document.getElementById('bank-upload').click()} className="border border-dashed border-border/50 bg-surface2/30 p-6 rounded-xl hover:bg-surface2/80 hover:border-primary/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.1)] cursor-pointer transition-all group relative overflow-hidden">
-                  <input type="file" id="bank-upload" accept=".csv,.pdf,.xls,.xlsx" className="hidden" onChange={(e) => {
+                <label htmlFor="bank-upload" className="block border border-dashed border-border/50 bg-surface2/30 p-6 rounded-xl hover:bg-surface2/80 hover:border-primary/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.1)] cursor-pointer transition-all group relative overflow-hidden">
+                  <input type="file" id="bank-upload" accept=".csv,.pdf,.xls,.xlsx" className="sr-only" onChange={(e) => {
                     if (e.target.files[0]) {
                       set('uploads', { ...form.uploads, bank: e.target.files[0] });
                       toast.success(`Attached ${e.target.files[0].name}`);
@@ -295,7 +295,7 @@ export default function NewAssessment() {
                        <p className="text-[10px] font-bold tracking-widest uppercase text-text-muted mt-2">CSV / PDF / XLS</p>
                      </div>
                   )}
-                </div>
+                </label>
               </div>
             </div>
 
