@@ -99,9 +99,8 @@ export default function About() {
             { name: "Yashovardhan", role: "Operations Lead", img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop" }
           ].map((member, i) => (
             <div key={i} className="flex flex-col items-center text-center group">
-              <div className="w-32 h-32 rounded-full mb-6 border-2 border-white/10 bg-surface2 overflow-hidden shadow-lg group-hover:shadow-[0_0_30px_rgba(245,158,11,0.2)] group-hover:border-primary/50 transition-all duration-500 relative">
-                 <img src={member.img} alt={member.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                 <div className="absolute inset-0 bg-primary/20 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="w-32 h-32 rounded-full mb-6 border-2 border-white/10 bg-surface2 overflow-hidden shadow-lg group-hover:shadow-[0_0_30px_rgba(245,158,11,0.2)] group-hover:border-primary/50 transition-all duration-500 relative flex items-center justify-center">
+                 <span className="material-symbols-outlined text-[64px] text-text-muted/50 group-hover:text-primary transition-all duration-700 group-hover:scale-110">person</span>
               </div>
               <h3 className="text-xl font-display font-bold text-white mb-1">{member.name}</h3>
               <p className="text-text-muted text-sm font-medium">{member.role}</p>
