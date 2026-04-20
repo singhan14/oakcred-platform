@@ -54,12 +54,17 @@ function generateSyntheticGSTData(gstin, months = 24) {
 
 async function fetchGSTData(gstin) {
   if (config.gstn.apiKey === 'mock') {
-    console.log(`[MOCK GSTN] Generating synthetic data for GSTIN: ${gstin}`);
+    console.warn(`[GSTN] Real GSTN API not configured. Generating synthetic data for GSTIN: ${gstin}. Set a real GSTN_API_KEY for production.`);
     return generateSyntheticGSTData(gstin);
   }
 
-  // Real GSTN API call would go here
-  throw new Error('Real GSTN API integration not yet implemented. Set GSTN_API_KEY=mock for development.');
+  // Real GSTN API integration placeholder — requires GST Suvidha Provider (GSP) partnership
+  // Partners: ClearTax, Masters India, Cygnet, etc.
+  throw new Error(
+    'Live GST sync requires a GST Suvidha Provider (GSP) partnership. ' +
+    'Please upload GSTR-3B PDF documents directly for AI-powered extraction, ' +
+    'or set GSTN_API_KEY=mock for development testing.'
+  );
 }
 
 module.exports = { fetchGSTData, generateSyntheticGSTData };

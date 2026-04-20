@@ -76,9 +76,7 @@ export default function NewAssessment() {
         phone: form.phone || null, email: form.email || null,
       });
 
-      if (form.gstin && !form.uploads.gst) {
-        try { await api.post('/data/gst/sync', { borrowerId: borrower.id, gstin: form.gstin.toUpperCase() }); } catch {}
-      }
+
 
       if (form.uploads.gst instanceof File) {
         const formData = new FormData();
@@ -222,55 +220,6 @@ export default function NewAssessment() {
               </div>
             </div>
 
-            {/* Automated Sources */}
-            <div className="space-y-4">
-              <h3 className="font-display text-lg font-bold text-white mb-2">Automated Data Sync Pipeline</h3>
-              <div className="flex items-center justify-between p-4 rounded-xl bg-surface2/30 border border-border/50 hover:bg-surface2/50 transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-surface2 border border-border/50 flex items-center justify-center shrink-0 shadow-inner">
-                    <span className="material-symbols-outlined text-primary text-[20px]">receipt_long</span>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm text-white">GST Filing Telemetry</h4>
-                    <p className="text-xs text-text-muted mt-0.5">Automated sync via GSTN API (Last 24M)</p>
-                  </div>
-                </div>
-                <div className="w-10 h-5 bg-success/20 border border-success/30 rounded-full relative">
-                  <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-success rounded-full shadow-[0_0_5px_rgba(34,197,94,0.5)]"></div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between p-4 rounded-xl bg-surface2/30 border border-border/50 hover:bg-surface2/50 transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-surface2 border border-border/50 flex items-center justify-center shrink-0 shadow-inner">
-                    <span className="material-symbols-outlined text-info text-[20px]">account_balance</span>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm text-white">Transactional Bank Data</h4>
-                    <p className="text-xs text-text-muted mt-0.5">Live extraction via Account Aggregator</p>
-                  </div>
-                </div>
-                <div className="w-10 h-5 bg-success/20 border border-success/30 rounded-full relative">
-                  <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-success rounded-full shadow-[0_0_5px_rgba(34,197,94,0.5)]"></div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between p-4 rounded-xl bg-surface2/30 border border-border/50 hover:bg-surface2/50 transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-surface2 border border-border/50 flex items-center justify-center shrink-0 shadow-inner">
-                    <span className="material-symbols-outlined text-warning text-[20px]">history_edu</span>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm text-white">Bureau Scoring (CIBIL)</h4>
-                    <p className="text-xs text-text-muted mt-0.5">Requires standalone user handshake</p>
-                  </div>
-                </div>
-                <button onClick={() => set('cibilCheck', !form.cibilCheck)} className={`w-10 h-5 rounded-full relative transition-colors border ${form.cibilCheck ? 'bg-success/20 border-success/30' : 'bg-surface2 border-border/50'}`}>
-                  <div className={`absolute top-0.5 w-4 h-4 rounded-full transition-transform ${form.cibilCheck ? 'right-0.5 bg-success shadow-[0_0_5px_rgba(34,197,94,0.5)]' : 'left-0.5 bg-text-muted'}`} />
-                </button>
-              </div>
-            </div>
-
             {/* Manual Uploads */}
             <div className="space-y-6">
               <p className="text-sm font-bold text-white mb-2">Smart Ingestion <span className="text-text-muted font-normal text-[10px] uppercase tracking-widest ml-2 border border-border/50 px-2 py-0.5 rounded-full bg-surface2/50">AI Document Parser</span></p>
@@ -391,7 +340,12 @@ export default function NewAssessment() {
                   {verdictLabel(result.assessment.verdict)}
                 </span>
               </div>
-              <p className="text-white bg-surface2/50 border border-border/50 px-6 py-3 rounded-xl max-w-lg mx-auto font-medium shadow-inner relative z-10">The borrower meets 92% of qualifying criteria for Expansion Credit.</p>
+              <p className="text-white bg-surface2/50 border border-border/50 px-6 py-3 rounded-xl max-w-lg mx-auto font-medium shadow-inner relative z-10">{
+                result.assessment.verdict === 'LOAN_READY' ? `Strong credit profile — meets key qualifying criteria for ${form.loanPurpose || 'credit facility'}.` :
+                result.assessment.verdict === 'CONDITIONALLY_READY' ? `Profile shows potential but requires improvement in some areas before proceeding with ${form.loanPurpose || 'credit facility'}.` :
+                result.assessment.verdict === 'UNDER_REVIEW' ? 'Additional data or documentation needed to complete a full assessment.' :
+                'Credit profile does not meet minimum lending criteria at this time. Review risk flags for details.'
+              }</p>
             </GlassCard>
 
             {/* Sub-scores */}
@@ -399,11 +353,11 @@ export default function NewAssessment() {
               <h3 className="font-display text-lg font-bold text-white px-8 py-5 border-b border-border/50 bg-surface2/30">Vector Analysis</h3>
               <div className="grid md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-border/50">
                 {[
-                  { label: 'GST', score: result.assessment.gstScore, m: 'Filing consistent' },
-                  { label: 'Cash Flow', score: result.assessment.cashFlowScore, m: 'No bounces' },
-                  { label: 'Tax', score: result.assessment.taxScore, m: 'Data available' },
-                  { label: 'Debt', score: result.assessment.debtScore, m: 'DSCR: >1.5x' },
-                  { label: 'Stability', score: result.assessment.stabilityScore, m: 'High' },
+                  { label: 'GST', score: result.assessment.gstScore, m: result.assessment.gstScore >= 75 ? 'Strong compliance' : result.assessment.gstScore >= 50 ? 'Moderate compliance' : 'Needs improvement' },
+                  { label: 'Cash Flow', score: result.assessment.cashFlowScore, m: result.assessment.cashFlowScore >= 75 ? 'Healthy cash flow' : result.assessment.cashFlowScore >= 50 ? 'Moderate stability' : 'Cash stress detected' },
+                  { label: 'Tax', score: result.assessment.taxScore, m: result.assessment.taxScore >= 75 ? 'Filing regular' : result.assessment.taxScore >= 50 ? 'Some gaps found' : 'Filing gaps detected' },
+                  { label: 'Debt', score: result.assessment.debtScore, m: `DSCR: ${result.assessment.dscr ? Number(result.assessment.dscr).toFixed(1) : 'N/A'}x` },
+                  { label: 'Stability', score: result.assessment.stabilityScore, m: result.assessment.stabilityScore >= 75 ? 'High stability' : result.assessment.stabilityScore >= 50 ? 'Moderate' : 'Low vintage' },
                 ].filter(f => f.score !== null).map(f => (
                   <div key={f.label} className="text-center p-6 bg-surface2/30 hover:bg-surface2/50 transition-colors group">
                     <span className={`font-display text-4xl font-bold block mb-2 transition-transform group-hover:scale-110 ${scoreColor(f.score)}`}>{f.score}<span className="text-text-muted text-sm font-normal">/100</span></span>

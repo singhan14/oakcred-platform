@@ -184,13 +184,8 @@ exports.uploadITR = async (req, res, next) => {
       const { extractITR } = require('../services/aiParser');
       extractedData = await extractITR(text, borrower.pan);
     } catch (parseErr) {
-      console.warn('[ITR] Parse failed, using manual defaults:', parseErr.message);
-      extractedData = {
-        assessmentYear: req.body.assessmentYear || `${new Date().getFullYear() - 1}-${String(new Date().getFullYear()).slice(2)}`,
-        grossIncome: parseFloat(req.body.grossIncome || 0),
-        taxPaid: parseFloat(req.body.taxPaid || 0),
-        pan: borrower.pan,
-      };
+      console.error('[ITR] Parse failed:', parseErr.message);
+      return res.status(422).json({ error: 'Failed to parse ITR document. Please ensure it is a valid computation sheet or acknowledgment.' });
     }
 
     const itrRecord = await prisma.iTRData.upsert({
@@ -202,7 +197,7 @@ exports.uploadITR = async (req, res, next) => {
       },
       update: {
         grossIncome: extractedData.grossIncome,
-        taxableIncome: extractedData.grossIncome * 0.8, // rough estimate
+        taxableIncome: extractedData.taxableIncome || null,
         taxPaid: extractedData.taxPaid,
         filingStatus: 'FILED',
         filedOn: new Date(),
@@ -216,7 +211,7 @@ exports.uploadITR = async (req, res, next) => {
         filingStatus: 'FILED',
         filedOn: new Date(),
         grossIncome: extractedData.grossIncome,
-        taxableIncome: extractedData.grossIncome * 0.8,
+        taxableIncome: extractedData.taxableIncome || null,
         taxPaid: extractedData.taxPaid,
         source: 'PDF_UPLOAD',
       },
@@ -243,7 +238,17 @@ exports.uploadBankStatement = async (req, res, next) => {
       return res.status(400).json({ error: 'File required' });
     }
 
-    const metrics = await parseBankStatement(req.file.buffer, req.file.mimetype);
+    let metrics;
+    try {
+      metrics = await parseBankStatement(req.file.buffer, req.file.mimetype);
+    } catch (parseErr) {
+      console.error('[BANK UPLOAD] Parse failed:', parseErr.message);
+      return res.status(422).json({
+        error: 'Failed to parse bank statement.',
+        details: parseErr.message,
+        suggestion: 'Please upload a clearly formatted CSV or PDF bank statement. Scanned images may not parse correctly.'
+      });
+    }
 
     // Archive raw document for Phase 2 ML Training
     try {

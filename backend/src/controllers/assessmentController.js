@@ -9,8 +9,8 @@ exports.runAssessment = async (req, res, next) => {
   try {
     const { requestedLoanAmount, requestedTenureMonths, loanPurpose } = req.body;
 
-    if (!requestedLoanAmount) {
-      return res.status(400).json({ error: 'requestedLoanAmount is required' });
+    if (!requestedLoanAmount || !isFinite(requestedLoanAmount) || Number(requestedLoanAmount) <= 0) {
+      return res.status(400).json({ error: 'requestedLoanAmount must be a positive number' });
     }
 
     const borrower = await prisma.borrower.findFirst({
@@ -46,7 +46,7 @@ exports.runAssessment = async (req, res, next) => {
       gstRecords,
       itrRecords,
       bankData,
-      requestedLoanAmount,
+      requestedLoanAmount: Number(requestedLoanAmount),
       requestedTenureMonths: requestedTenureMonths || 36,
       loanPurpose,
     });
@@ -56,13 +56,14 @@ exports.runAssessment = async (req, res, next) => {
       gstRecordCount: gstRecords.length,
       itrRecordCount: itrRecords.length,
       hasBankData: !!bankData,
-      requestedLoanAmount,
-      requestedTenureMonths,
+      requestedLoanAmount: Number(requestedLoanAmount),
+      requestedTenureMonths: requestedTenureMonths || 36,
+      loanPurpose: loanPurpose || 'Working Capital',
     };
     const rawInputData = encrypt(rawInputRaw);
 
-    // Run Generative AI (LLM) processing
-    const { aiSummary, aiInsights } = await llmService.generateCreditMemo(rawInputRaw, result);
+    // Run Generative AI (LLM) processing — pass borrower for personalized memo
+    const { aiSummary, aiInsights } = await llmService.generateCreditMemo(rawInputRaw, result, borrower);
 
     // Save assessment
     const assessment = await prisma.creditAssessment.create({

@@ -188,7 +188,15 @@ export default function Dashboard() {
                           ) : <span className="text-text-muted text-[10px] font-label tracking-wider bg-white/5 px-3 py-1.5 rounded-full">PENDING</span>}
                         </td>
                         <td className="px-6 py-4 hidden sm:table-cell text-xs text-text-muted text-right">
-                          {b.assessments?.[0] ? "2h ago" : "Waiting"}
+                          {b.assessments?.[0] ? (() => {
+                            const diff = Date.now() - new Date(b.assessments[0].createdAt).getTime();
+                            const mins = Math.floor(diff / 60000);
+                            if (mins < 60) return `${mins}m ago`;
+                            const hrs = Math.floor(mins / 60);
+                            if (hrs < 24) return `${hrs}h ago`;
+                            const days = Math.floor(hrs / 24);
+                            return `${days}d ago`;
+                          })() : "Waiting"}
                         </td>
                       </tr>
                     ))}

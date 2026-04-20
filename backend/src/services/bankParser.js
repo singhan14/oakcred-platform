@@ -21,8 +21,8 @@ async function parseBankStatement(buffer, mimetype) {
       return await extractBankMetrics(data.text);
     }
   } catch (err) {
-    console.warn('[BANK PARSER] Parsing failed, generating mock metrics:', err.message);
-    return generateMockBankMetrics();
+    console.error('[BANK PARSER] Parsing failed:', err.message);
+    throw new Error(`Bank statement parsing failed: ${err.message}. Please upload a clearly formatted PDF or CSV bank statement.`);
   }
 }
 

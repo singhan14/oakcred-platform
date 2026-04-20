@@ -150,14 +150,14 @@ export default function BorrowerDetail() {
                 <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1">GST Integration</p>
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                  <span className="text-sm font-medium text-white">Synced 2h ago</span>
+                  <span className="text-sm font-medium text-white">{borrower.gstData?.length > 0 ? `${borrower.gstData.length} records synced` : 'Not connected'}</span>
                 </div>
               </div>
               <div>
                 <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1">ITR Records</p>
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-[16px] text-info">verified</span>
-                  <span className="text-sm font-medium text-white">3 years verified</span>
+                  <span className="text-sm font-medium text-white">{borrower.itrData?.length > 0 ? `${borrower.itrData.length} year${borrower.itrData.length > 1 ? 's' : ''} on file` : 'Not uploaded'}</span>
                 </div>
               </div>
             </div>
@@ -189,10 +189,17 @@ export default function BorrowerDetail() {
             
             {a && (
               <div className="pb-2">
-                <span className="flex items-center text-success font-bold text-sm bg-success/10 border border-success/20 px-2.5 py-1 rounded-md mb-2 shadow-sm shadow-success/10">
-                  <span className="material-symbols-outlined text-[16px] mr-1">trending_up</span> +6 pts
-                </span>
-                <p className="text-[10px] font-label uppercase tracking-widest text-text-muted">Last Assessment</p>
+                {(() => {
+                  const assessments = borrower.assessments || [];
+                  const delta = assessments.length >= 2 ? assessments[0].overallScore - assessments[1].overallScore : null;
+                  if (delta !== null && delta !== 0) {
+                    return <span className={`flex items-center font-bold text-sm ${delta > 0 ? 'text-success bg-success/10 border-success/20' : 'text-error bg-error/10 border-error/20'} border px-2.5 py-1 rounded-md mb-2 shadow-sm`}>
+                      <span className="material-symbols-outlined text-[16px] mr-1">{delta > 0 ? 'trending_up' : 'trending_down'}</span> {delta > 0 ? '+' : ''}{delta} pts
+                    </span>;
+                  }
+                  return <span className="text-text-muted text-xs mb-2 block">First assessment</span>;
+                })()}
+                <p className="text-[10px] font-label uppercase tracking-widest text-text-muted">{borrower.assessments?.length > 1 ? 'vs Previous' : 'Latest'}</p>
               </div>
             )}
           </div>
@@ -218,7 +225,7 @@ export default function BorrowerDetail() {
                <span className="material-symbols-outlined text-[24px] bg-white/20 p-2 rounded-lg backdrop-blur-sm shadow-sm relative z-10">fact_check</span>
                <div className="relative z-10">
                   <h4 className="font-bold uppercase tracking-widest text-sm mb-1">{verdictLabel(a.verdict)}</h4>
-                  <p className="text-xs font-medium opacity-90 leading-relaxed">System confidence high. Borrower meets 92% of qualifying criteria for expansion credit line.</p>
+                  <p className="text-xs font-medium opacity-90 leading-relaxed">{a.verdict === 'LOAN_READY' ? `${a.confidenceLevel || 'High'} confidence. Key lending criteria met for credit expansion.` : a.verdict === 'CONDITIONALLY_READY' ? 'Potential detected — address flagged risk areas before proceeding.' : a.verdict === 'UNDER_REVIEW' ? 'Additional data needed to improve assessment confidence.' : 'Does not meet minimum requirements. Review risk flags.'}</p>
                </div>
             </div>
           )}
