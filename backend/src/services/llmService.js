@@ -14,11 +14,13 @@ const ai = new GoogleGenAI({
  * @returns {Promise<{ aiSummary: string, aiInsights: Array }>}
  */
 exports.generateCreditMemo = async (rawInputData, calculatedMetrics, borrower = {}) => {
-  if (!process.env.GEMINI_API_KEY) {
-    console.warn('[LLM SERVICE] GEMINI_API_KEY is missing. Falling back to synthetic mock data.');
+  if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'mock') {
+    console.warn('[LLM SERVICE] GEMINI_API_KEY is missing or set to mock. AI Credit Memo unavailable.');
     return {
-      aiSummary: '### Credit Memorandum\\n\\n*AI Service is completely offline. Add GEMINI_API_KEY to environment variables to enable generative underwriting.*',
-      aiInsights: []
+      aiSummary: null,
+      aiInsights: [],
+      aiStatus: 'UNAVAILABLE',
+      aiStatusMessage: 'AI Credit Memo is unavailable. Configure a valid GEMINI_API_KEY to enable generative underwriting.',
     };
   }
 
@@ -132,12 +134,15 @@ Write the JSON now.
     return {
       aiSummary: output.aiSummary,
       aiInsights: Array.isArray(output.aiInsights) ? output.aiInsights : [],
+      aiStatus: 'OK',
     };
   } catch (err) {
     console.error('[LLM Generation Error]', err);
     return {
-      aiSummary: '### AI Generation Error\n\nThe AI engine encountered an issue while generating the credit memorandum. Please rely on the mathematical risk vectors and deterministic flags below for your assessment.',
-      aiInsights: []
+      aiSummary: null,
+      aiInsights: [],
+      aiStatus: 'ERROR',
+      aiStatusMessage: 'The AI engine encountered an error. Rely on the deterministic risk scores for your assessment.',
     };
   }
 };

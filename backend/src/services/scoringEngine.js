@@ -146,33 +146,45 @@ function extractCashFlowFeatures(bankData, requestedLoanAmount) {
   const loanAmt = Number(requestedLoanAmount || 1);
 
   // F7: Balance coefficient of variation (stability) — #2 ranked
-  // Approximate from available data
-  const balanceValues = bankData.monthlyBalances
-    ? bankData.monthlyBalances.map(Number)
-    : [avgBalance * 0.8, avgBalance, avgBalance * 1.1, avgBalance * 0.9, avgBalance * 1.05, avgBalance * 0.95];
+  // Use real monthly breakdowns from AI parser when available
+  let balanceValues;
+  if (Array.isArray(bankData.monthlyBalances) && bankData.monthlyBalances.length >= 2) {
+    balanceValues = bankData.monthlyBalances.map(Number).filter(v => isFinite(v) && v >= 0);
+  }
+  // Fallback: single-point estimate (low confidence — CV will be 0)
+  if (!balanceValues || balanceValues.length < 2) {
+    balanceValues = [avgBalance];
+  }
   const cf_balance_cv = coefficientOfVariation(balanceValues);
 
   // F8: Cash coverage ratio (can they cover obligations from cash?)
   const monthlyObligations = Number(bankData.totalEMIBurden || 0) + (loanAmt > 0 ? pmt(0.14 / 12, 36, loanAmt) : 0);
   const cf_cash_coverage = monthlyObligations > 0 ? avgBalance / monthlyObligations : avgBalance > 0 ? 5 : 0;
 
-  // F9: Bounce rate
-  const totalTxn = Number(bankData.totalTransactions || 100);
+  // F9: Bounce rate — use real transaction count from AI parser
+  const totalTxn = Number(bankData.rawTransactionCount || bankData.totalTransactions || 0);
   const bounceCount = Number(bankData.bounceCount || 0);
-  const cf_bounce_rate = totalTxn > 0 ? bounceCount / totalTxn : 0;
+  const cf_bounce_rate = totalTxn > 0 ? bounceCount / totalTxn : (bounceCount > 0 ? 0.05 : 0);
 
   // F10: Inflow concentration (HHI — Herfindahl index)
-  // Higher = more concentrated = riskier
-  const cf_inflow_hhi = Number(bankData.inflowConcentrationHHI || 0.25); // default moderate
+  // Use real HHI from AI parser; only default when genuinely unavailable
+  const rawHHI = Number(bankData.inflowConcentrationHHI);
+  const cf_inflow_hhi = isFinite(rawHHI) && rawHHI >= 0 && rawHHI <= 1 ? rawHHI : 0.25;
 
   // F11: EMI burden ratio
   const totalEMI = Number(bankData.totalEMIBurden || 0);
   const cf_emi_burden = avgInflow > 0 ? totalEMI / avgInflow : 0;
 
   // F12: Inflow trend (growing vs declining)
-  const inflowValues = bankData.monthlyInflows
-    ? bankData.monthlyInflows.map(Number)
-    : [avgInflow * 0.9, avgInflow * 0.95, avgInflow, avgInflow * 1.02, avgInflow * 1.05, avgInflow * 1.08];
+  // Use real monthly inflow breakdowns from AI parser when available
+  let inflowValues;
+  if (Array.isArray(bankData.monthlyInflows) && bankData.monthlyInflows.length >= 2) {
+    inflowValues = bankData.monthlyInflows.map(Number).filter(v => isFinite(v) && v >= 0);
+  }
+  // Fallback: single-point estimate (slope will be 0 — neutral)
+  if (!inflowValues || inflowValues.length < 2) {
+    inflowValues = [avgInflow];
+  }
   const cf_inflow_trend = linearSlope(inflowValues);
 
   return { cf_balance_cv, cf_cash_coverage, cf_bounce_rate, cf_inflow_hhi, cf_emi_burden, cf_inflow_trend };

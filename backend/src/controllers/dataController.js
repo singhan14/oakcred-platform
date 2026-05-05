@@ -199,6 +199,7 @@ exports.uploadITR = async (req, res, next) => {
         grossIncome: extractedData.grossIncome,
         taxableIncome: extractedData.taxableIncome || null,
         taxPaid: extractedData.taxPaid,
+        refundAmount: extractedData.refundAmount || 0,
         filingStatus: 'FILED',
         filedOn: new Date(),
         fetchedAt: new Date(),
@@ -213,6 +214,7 @@ exports.uploadITR = async (req, res, next) => {
         grossIncome: extractedData.grossIncome,
         taxableIncome: extractedData.taxableIncome || null,
         taxPaid: extractedData.taxPaid,
+        refundAmount: extractedData.refundAmount || 0,
         source: 'PDF_UPLOAD',
       },
     });
@@ -259,27 +261,50 @@ exports.uploadBankStatement = async (req, res, next) => {
 
     const bankName = req.body.bankName || 'Unknown Bank';
     const accountNumber = req.body.accountNumber || '****';
+    const periodFrom = new Date(req.body.periodFrom || new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000));
+    const periodTo = new Date(req.body.periodTo || new Date());
 
-    const bankData = await prisma.bankStatementData.create({
-      data: {
+    // Check for existing record to prevent duplicates
+    const existing = await prisma.bankStatementData.findFirst({
+      where: {
         borrowerId: borrower.id,
         bankName,
-        accountNumber: accountNumber.slice(-4),
-        periodFrom: new Date(req.body.periodFrom || new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000)),
-        periodTo: new Date(req.body.periodTo || new Date()),
-        avgMonthlyBalance: metrics.avgMonthlyBalance,
-        avgMonthlyInflow: metrics.avgMonthlyInflow,
-        avgMonthlyOutflow: metrics.avgMonthlyOutflow,
-        bounceCount: metrics.bounceCount,
-        salaryDetected: metrics.salaryDetected,
-        estimatedSalary: metrics.estimatedSalary,
-        detectedEMIs: metrics.detectedEMIs,
-        totalEMIBurden: metrics.totalEMIBurden,
-        inflowConsistencyScore: metrics.inflowConsistencyScore,
-        rawTransactionCount: metrics.rawTransactionCount,
-        source: 'PDF_UPLOAD',
+        periodFrom: { gte: new Date(periodFrom.getTime() - 7 * 24 * 60 * 60 * 1000) }, // within 7 days
+        periodTo: { lte: new Date(periodTo.getTime() + 7 * 24 * 60 * 60 * 1000) },
       },
     });
+
+    const bankDataPayload = {
+      borrowerId: borrower.id,
+      bankName,
+      accountNumber: accountNumber.slice(-4),
+      periodFrom,
+      periodTo,
+      avgMonthlyBalance: metrics.avgMonthlyBalance,
+      avgMonthlyInflow: metrics.avgMonthlyInflow,
+      avgMonthlyOutflow: metrics.avgMonthlyOutflow,
+      bounceCount: metrics.bounceCount,
+      salaryDetected: metrics.salaryDetected,
+      estimatedSalary: metrics.estimatedSalary,
+      detectedEMIs: metrics.detectedEMIs,
+      totalEMIBurden: metrics.totalEMIBurden,
+      inflowConsistencyScore: metrics.inflowConsistencyScore,
+      rawTransactionCount: metrics.rawTransactionCount,
+      source: 'PDF_UPLOAD',
+    };
+
+    let bankData;
+    if (existing) {
+      // Update existing record instead of creating a duplicate
+      bankData = await prisma.bankStatementData.update({
+        where: { id: existing.id },
+        data: bankDataPayload,
+      });
+    } else {
+      bankData = await prisma.bankStatementData.create({
+        data: bankDataPayload,
+      });
+    }
 
     res.json({ message: 'Bank statement uploaded and parsed', data: bankData });
   } catch (err) {

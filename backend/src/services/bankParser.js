@@ -53,7 +53,7 @@ async function parseCsvBankStatement(buffer) {
             const key = k.toLowerCase();
             const val = parseFloat(String(row[k]).replace(/[^\d.-]/g, ''));
             if (!isNaN(val)) {
-              if (key.includes('credit') || key.includes('deposit') || key.includes('withdrawal')) creditAmount = val;
+              if (key.includes('credit') || key.includes('deposit')) creditAmount = val;
               else if (key.includes('debit') || key.includes('withdrawal')) debitAmount = val;
               else if (key.includes('balance')) balance = val;
             }
@@ -107,8 +107,8 @@ async function parseCsvBankStatement(buffer) {
         });
       })
       .on('error', (err) => {
-        console.warn('CSV parsing failed:', err);
-        resolve(generateMockBankMetrics());
+        console.error('[BANK CSV] Parsing failed:', err.message);
+        reject(new Error(`CSV parsing failed: ${err.message}. Please ensure the file is a valid CSV with transaction data.`));
       });
   });
 }
@@ -202,23 +202,4 @@ function extractMetricsFromText(text) {
   };
 }
 
-function generateMockBankMetrics() {
-  const avgBalance = 150000 + Math.random() * 500000;
-  const avgInflow = 200000 + Math.random() * 800000;
-  const bounceCount = Math.random() > 0.8 ? Math.floor(Math.random() * 3) : 0;
-
-  return {
-    avgMonthlyBalance: Math.round(avgBalance),
-    avgMonthlyInflow: Math.round(avgInflow),
-    avgMonthlyOutflow: Math.round(avgInflow * (0.6 + Math.random() * 0.3)),
-    bounceCount,
-    salaryDetected: Math.random() > 0.5,
-    estimatedSalary: Math.random() > 0.5 ? Math.round(50000 + Math.random() * 150000) : null,
-    detectedEMIs: [{ amount: 15000, frequency: 'MONTHLY', count: 6 }],
-    totalEMIBurden: 15000,
-    inflowConsistencyScore: Math.round(60 + Math.random() * 35),
-    rawTransactionCount: 180,
-  };
-}
-
-module.exports = { parseBankStatement, extractMetricsFromText, generateMockBankMetrics };
+module.exports = { parseBankStatement, extractMetricsFromText };
