@@ -94,8 +94,8 @@ export default function About() {
           {/* Updated Team Members */}
           {[
             { name: "Singhan Yadav", role: "Tech", img: "/singhan.png" },
-            { name: "Ahan Mazumdar", role: "Research & Development", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop" },
-            { name: "Aaron Alex Luke", role: "Commercial", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop" },
+            { name: "Ahan Mazumdar", role: "Research & Development", img: "/ahan.png" },
+            { name: "Aaron Alex Luke", role: "Commercial", img: "/aaron.png" },
             { name: "Yashovardhan", role: "Operations Lead", img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop" }
           ].map((member, i) => (
             <div key={i} className="flex flex-col items-center text-center group">
